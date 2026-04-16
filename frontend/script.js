@@ -661,6 +661,31 @@ window.loadClassForEdit = async function (slug) {
     }
 };
 
+window.resetClassData = async function() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('id');
+    if (!slug) return;
+    
+    const confirmReset = confirm("AVISO: Você realmente quer apagar todos os dados permanentemente?\nISSO APAGARÁ XP, NOTAS, PRESENÇAS, COMPORTAMENTOS, BADGES, TENTATIVAS E RANKINGS DE TODOS OS ALUNOS DESTA TURMA!\n\nOs dados pessoais dos alunos (nome, foto, login) serão mantidos intactos.\n\nEsta ação NÃO pode ser desfeita. Continuar?");
+    if (!confirmReset) return;
+
+    const adminUsername = localStorage.getItem('username') || '';
+    try {
+        const res = await fetch(`${API_URL}/turmas/${slug}/reset?admin=${adminUsername}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.ok) {
+            alert("Todos os dados do relatório e XP foram zerados com sucesso!");
+            window.location.reload();
+        } else {
+            alert("Falha ao zerar os dados da turma.");
+        }
+    } catch (err) {
+        alert("Erro de conexão ao tentar zerar os dados.");
+    }
+};
+
 window.loadReport = async function (slug) {
     const adminUsername = localStorage.getItem('username') || '';
     const userType = localStorage.getItem('userType') || '';

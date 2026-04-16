@@ -248,3 +248,27 @@ async def update_student_badges(slug: str, nome: str, req: BadgeUpdateSchema, ad
         
     return {"message": "Badges do aluno atualizados com sucesso", "badges": req.badges}
 
+@app.put("/api/turmas/{slug}/reset")
+async def reset_class_data(slug: str, admin: Optional[str] = None):
+    turma = await db["turmas"].find_one({"slug": slug})
+    if not turma:
+        raise HTTPException(status_code=404, detail="Turma não encontrada")
+        
+    if admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
+        raise HTTPException(status_code=403, detail="Acesso negado ao zerar dados da turma")
+
+    # Zera as informações relacionadas a desempenho/xp, mantendo o cadastro do aluno.
+    res = await db["alunos"].update_many(
+        {"class_id": slug},
+        {"$set": {
+            "notas": [],
+            "presencas": [],
+            "comportamentos": [],
+            "testes_tentativas": [],
+            "badges": ["", "", "", ""],
+            "xp_total": 0
+        }}
+    )
+    
+    return {"message": "Dados dos alunos zerados com sucesso"}
+
