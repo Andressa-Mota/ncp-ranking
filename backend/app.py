@@ -230,8 +230,8 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
 class BadgeUpdateSchema(BaseModel):
     badges: List[str]
 
-@app.put("/api/turmas/{slug}/aluno/{usuario}/badges")
-async def update_student_badges(slug: str, usuario: str, req: BadgeUpdateSchema, admin: Optional[str] = None):
+@app.put("/api/turmas/{slug}/aluno/{nome}/badges")
+async def update_student_badges(slug: str, nome: str, req: BadgeUpdateSchema, admin: Optional[str] = None):
     turma = await db["turmas"].find_one({"slug": slug})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada")
@@ -239,7 +239,7 @@ async def update_student_badges(slug: str, usuario: str, req: BadgeUpdateSchema,
         raise HTTPException(status_code=403, detail="Acesso negado ao editar badges")
         
     res = await db["alunos"].update_one(
-        {"class_id": slug, "usuario": usuario},
+        {"class_id": slug, "nome": nome},
         {"$set": {"badges": req.badges}}
     )
     

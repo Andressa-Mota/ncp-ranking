@@ -231,13 +231,15 @@ window.addStudentFields = function () {
 };
 
 // Lógica do Seletor de Insígnias Sci-Fi
-let currentBadgeStudentUser = "";
+let currentBadgeStudentName = "";
 let currentBadgeIndex = -1;
+let currentHtmlId = -1;
 let currentClassSlug = "";
 
-window.openBadgeSelector = function(usuario, slotIndex) {
-    currentBadgeStudentUser = usuario;
+window.openBadgeSelector = function(nome, slotIndex, htmlId) {
+    currentBadgeStudentName = nome;
     currentBadgeIndex = slotIndex;
+    currentHtmlId = htmlId;
     let overlay = document.getElementById('global-badge-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
@@ -265,15 +267,15 @@ window.openBadgeSelector = function(usuario, slotIndex) {
 
 window.applySelectedBadge = async function(imageName) {
     document.getElementById('global-badge-overlay').style.display = 'none';
-    if(currentBadgeStudentUser === "" || currentBadgeIndex === -1) return;
+    if(currentBadgeStudentName === "" || currentBadgeIndex === -1) return;
     
     const adminUsername = localStorage.getItem('username') || '';
     try {
-        const slotContainer = document.getElementById(`badge-container-${currentBadgeStudentUser}`);
+        const slotContainer = document.getElementById(`badge-container-${currentHtmlId}`);
         let currentBadges = JSON.parse(slotContainer.getAttribute('data-badges') || '["","","",""]');
         currentBadges[currentBadgeIndex] = imageName;
         
-        const response = await fetch(`${API_URL}/turmas/${currentClassSlug}/aluno/${currentBadgeStudentUser}/badges?admin=${adminUsername}`, {
+        const response = await fetch(`${API_URL}/turmas/${currentClassSlug}/aluno/${encodeURIComponent(currentBadgeStudentName)}/badges?admin=${adminUsername}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ badges: currentBadges })
@@ -328,9 +330,9 @@ window.loadClassRanking = async function (slug) {
             for(let i=0; i<4; i++){
                 const b = badgesArr[i];
                 if(b) {
-                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.usuario}', ${i})"` : ''}></div>`;
+                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
                 } else if(isAdmin) {
-                   badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.usuario}', ${i})">+</div>`;
+                   badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})">+</div>`;
                 } else {
                    badgesHtml += `<div class="badge-slot read-only"></div>`;
                 }
@@ -341,7 +343,7 @@ window.loadClassRanking = async function (slug) {
                 <div class="sci-fi-border"></div>
                 ${trophyHtml}
                 <div class="sci-fi-top-grid">
-                    <div class="sci-fi-badges-left" id="badge-container-${aluno.usuario}" data-badges='${JSON.stringify(badgesArr)}'>
+                    <div class="sci-fi-badges-left" id="badge-container-${index}" data-badges='${JSON.stringify(badgesArr)}'>
                         ${badgesHtml}
                     </div>
                     <div class="sci-fi-portrait-right">

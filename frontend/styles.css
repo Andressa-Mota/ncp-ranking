@@ -409,6 +409,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 20px;
+    align-items: start;
 }
 
 .student-card {
@@ -536,6 +537,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 300px;
+    height: 50vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -573,19 +575,19 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 8px;
-    width: 80px; 
+    gap: 4px;
+    width: 100px; 
     align-items: center;
     justify-items: center;
 }
 
 .badge-slot {
-    width: 30px;
-    height: 30px;
+    width: 46px;
+    height: 46px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    font-size: 38px;
     font-weight: 900;
     color: #106be0;
     cursor: pointer;
