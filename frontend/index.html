@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ranking NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    
+    <!-- Top Decoration -->
+    <div class="decoration-box top-deco">
+        <div class="deco-inner"></div>
+    </div>
+    
+    <main class="login-main">
+        <header class="login-header">
+            <div class="header-left">
+                <!-- Using emoji as fallback since I don't have the image file, but styled closely -->
+                <div style="font-size: 60px;">🏆</div> 
+            </div>
+            
+            <div class="header-center">
+                <h1 class="header-title">SISTEMA DE RANKING</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="simple-logo">
+                    <span class="sl-top">NCP</span>
+                    <span class="sl-bot">CURSOS</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="login-wrapper">
+            <div class="login-box-blue">
+                <h2 class="login-heading">LOGIN</h2>
+                
+                <form id="login-form" class="login-form-blue">
+                    <div class="input-row">
+                        <label for="username">USUÁRIO:</label>
+                        <input type="text" id="username" name="username" required autocomplete="off">
+                    </div>
+                    <div class="input-row">
+                        <label for="password">SENHA:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="login-submit-btn">ENTRAR</button>
+                </form>
+                <div id="login-error" class="error-msg" style="display: none; color: #ffeb3b; font-family: 'Press Start 2P', cursive; font-size: 10px; margin-top: 20px; text-align: center;">Credenciais inválidas!</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Decoration -->
+    <div class="decoration-box bot-deco">
+        <div class="deco-inner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

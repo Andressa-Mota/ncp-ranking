@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Turma - Ranking NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    
+    <div class="decoration-box top-deco"><div class="deco-inner"></div></div>
+    
+    <main class="login-main">
+        <header class="login-header">
+            <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
+                <button class="voltar-btn" onclick="window.history.back()">
+                    <div class="voltar-icon-container">
+                        <span class="voltar-arrow">◀</span>
+                        <span>VOLTAR</span>
+                    </div>
+                </button>
+                <div style="font-size: 60px;">🏆</div> 
+            </div>
+            
+            <div class="header-center" onclick="goToPage('menu.html')" style="cursor: pointer;">
+                <h1 class="header-title">SISTEMA DE RANKING</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="simple-logo">
+                    <span class="sl-top">NCP</span>
+                    <span class="sl-bot">CURSOS</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="login-wrapper">
+            <div class="login-box-blue admin-box-expanded">
+                <h2 class="login-heading">NOVA TURMA</h2>
+                
+                <form id="add-class-form" class="login-form-blue">
+                    
+                    <div class="input-row">
+                        <label for="class-name">NOME:</label>
+                        <input type="text" id="class-name" name="class-name" placeholder="Ex: SÁB - 8H" required autocomplete="off">
+                    </div>
+
+                    <div id="alunos-container" class="alunos-scroll-container">
+                        <!-- Campos injetados via JS -->
+                    </div>
+
+                    <div class="admin-actions">
+                        <button type="button" class="login-submit-btn secondary-btn" onclick="addStudentFields()">+ ALUNO</button>
+                        <button type="submit" class="login-submit-btn">SALVAR TURMA</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div class="decoration-box bot-deco"><div class="deco-inner"></div></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

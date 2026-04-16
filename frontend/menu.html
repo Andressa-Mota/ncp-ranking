@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal - Ranking NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    
+    <div class="decoration-box top-deco">
+        <div class="deco-inner"></div>
+    </div>
+    
+    <main class="login-main">
+        <header class="login-header">
+            <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
+                <button class="voltar-btn" onclick="localStorage.clear(); window.location.href='index.html';">
+                    <div class="voltar-icon-container">
+                        <span class="voltar-arrow">◀</span>
+                        <span>SAIR</span>
+                    </div>
+                </button>
+                <div style="font-size: 60px;">🏆</div> 
+            </div>
+            
+            <div class="header-center" style="flex-direction: column; gap: 15px;">
+                <h1 class="header-title" style="font-size: 14px;">RANKING PARA DESTAQUES DO MÊS</h1>
+                <h2 class="sub-title" style="font-family: 'Audiowide', cursive; color: #005aff; font-size: 26px; text-transform: uppercase; letter-spacing: 2px;">TURMAS DE SÁBADO</h2>
+            </div>
+            
+            <div class="header-right">
+                <div class="simple-logo">
+                    <span class="sl-top">NCP</span>
+                    <span class="sl-bot">CURSOS</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="menu-buttons-container">
+            <button class="class-btn" onclick="goToPage('turma.html?id=sabado-8h')">SÁB - 8H</button>
+            <button class="class-btn" onclick="goToPage('turma.html?id=sabado-940h')">SÁB - 9:40H</button>
+            <button class="class-btn" onclick="goToPage('turma.html?id=sabado-1120h')">SÁB - 11:20H</button>
+        </div>
+
+        <div class="menu-actions-container" style="display: flex; justify-content: center; margin-top: 40px; width: 100%;">
+            <button class="class-btn" style="background-color: #f8b500; color: #000; box-shadow: 0 4px 6px rgba(248,181,0,0.4);" onclick="goToPage('adicionar-turma.html')">+ ADICIONAR TURMA</button>
+        </div>
+
+    </main>
+
+    <div class="decoration-box bot-deco">
+        <div class="deco-inner"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

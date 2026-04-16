@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Turma - NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="turma-body">
+    
+    <div class="decoration-box top-deco"><div class="deco-inner"></div></div>
+    
+    <header class="ranking-header">
+        <div class="header-left" style="display: flex; align-items: center;">
+            <button class="voltar-btn" id="turma-voltar-btn" onclick="handleTurmaVoltar()">
+                <div class="voltar-icon-container" id="turma-voltar-container">
+                    <span class="voltar-arrow">◀</span>
+                    <span id="turma-voltar-text">VOLTAR</span>
+                </div>
+            </button>
+            <h2 id="turma-title" class="turma-title-blue">CARREGANDO...</h2>
+        </div>
+        
+        <script>
+            function handleTurmaVoltar() {
+                if (localStorage.getItem('userType') === 'aluno') {
+                    localStorage.clear();
+                    window.location.href = 'index.html';
+                } else {
+                    window.location.href = 'menu.html';
+                }
+            }
+            document.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem('userType') === 'aluno') {
+                    document.getElementById('turma-voltar-text').innerText = 'SAIR';
+                    document.getElementById('turma-voltar-container').style.borderColor = '#ff4c4c';
+                    document.getElementById('turma-voltar-container').style.color = '#ff4c4c';
+                }
+            });
+        </script>
+        
+        <div class="header-center">
+            <h1 class="header-title">RANKING PARA DESTAQUES DO MÊS</h1>
+        </div>
+        
+        <div class="header-right" id="header-right-actions" style="display: flex; align-items: center; gap: 20px;">
+            <div class="simple-logo">
+                <span class="sl-top">NCP</span>
+                <span class="sl-bot">CURSOS</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="ranking-grid" id="ranking-grid">
+        <!-- Javascript vai injetar os cartões de alunos aqui -->
+    </main>
+
+    <div class="decoration-box bot-deco"><div class="deco-inner"></div></div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('id');
+            if (slug && typeof loadClassRanking === "function") {
+                loadClassRanking(slug);
+            } else {
+                document.getElementById('turma-title').innerText = "TURMA NÃO IDENTIFICADA";
+            }
+        });
+    </script>
+</body>
+</html>

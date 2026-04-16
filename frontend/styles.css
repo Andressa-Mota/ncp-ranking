@@ -1,0 +1,723 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Decorations (top and bottom cyan borders from the image) */
+.decoration-box {
+    width: 600px;
+    height: 30px;
+    margin: 0 auto;
+    position: relative;
+    border: 3px solid cyan;
+}
+.top-deco {
+    border-top: none;
+    border-bottom: 3px solid cyan;
+    /* create polygon slopes using border tricks or clip path */
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+    background: transparent;
+    margin-bottom: 20px;
+}
+.bot-deco {
+    border-bottom: none;
+    border-top: 3px solid cyan;
+    clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
+    background: transparent;
+    margin-top: auto; 
+}
+
+
+/* Login Layout */
+.login-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.login-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.login-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.header-left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.header-center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.header-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px; 
+    color: #000;
+    text-align: center;
+}
+
+/* Simple fallback logo that won't break layout */
+.simple-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sl-top {
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    color: #4da6ff;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+.sl-bot {
+    font-family: 'Audiowide', sans-serif;
+    background-color: #4da6ff;
+    color: white;
+    font-size: 10px;
+    padding: 2px 10px;
+    border-radius: 4px;
+    letter-spacing: 2px;
+}
+
+/* Login Box Exact Stylings */
+.login-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.login-box-blue {
+    background-color: #0a4fdf; /* Strict blue from screenshot */
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 480px; /* matched to proportions */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-heading {
+    color: white;
+    font-family: 'Audiowide', cursive;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+.login-form-blue {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.input-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-row label {
+    color: white;
+    font-family: 'Audiowide', cursive;
+    font-size: 14px;
+    letter-spacing: 1px;
+    width: 25%;
+    text-align: left;
+}
+
+.input-row input {
+    width: 75%;
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 50px;
+    height: 40px;
+    padding: 0 15px;
+    color: white;
+    font-family: 'Audiowide', cursive;
+    font-size: 16px;
+    outline: none;
+}
+
+.login-submit-btn {
+    margin-top: 15px;
+    background-color: #ffffff;
+    color: #000;
+    font-family: 'Audiowide', cursive;
+    font-size: 15px;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 45px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.login-submit-btn:hover {
+    transform: scale(1.05);
+    background-color: #f0f0f0;
+}
+
+/* Class Selection Menu (menu.html) specific styles */
+.menu-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 50px;
+    width: 100%;
+}
+
+.class-btn {
+    background-color: #0a4fdf;
+    color: white;
+    font-family: 'Audiowide', cursive;
+    font-size: 22px;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, background-color 0.2s;
+    text-transform: uppercase;
+}
+
+.class-btn:hover {
+    transform: scale(1.05);
+    background-color: #0040bc;
+}
+
+.menu-footer {
+    margin-top: auto;
+    padding-bottom: 40px;
+}
+
+.menu-footer p {
+    font-family: 'Press Start 2P', cursive;
+    color: #888888;
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Adicionar Turmas Admin Style */
+.admin-box-expanded {
+    max-width: 650px;
+    padding: 30px;
+}
+
+.alunos-scroll-container {
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-right: 10px;
+}
+
+.alunos-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+.alunos-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 10px;
+}
+.alunos-scroll-container::-webkit-scrollbar-thumb {
+    background: white; 
+    border-radius: 10px;
+}
+
+.student-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    padding: 15px;
+    border-radius: 12px;
+    position: relative;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4c4c;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.student-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.student-row label {
+    color: white;
+    font-family: 'Audiowide', cursive;
+    font-size: 12px;
+    width: 30%;
+}
+
+.student-row input {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 20px;
+    color: white;
+    padding: 8px 15px;
+    font-family: 'Audiowide', cursive;
+    font-size: 12px;
+    width: 70%;
+    outline: none;
+}
+
+.student-row input[type="file"] {
+    padding: 5px;
+}
+
+.student-row input::file-selector-button {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'Audiowide', cursive;
+}
+
+.admin-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.secondary-btn {
+    background-color: #f8b500;
+    color: black;
+}
+
+/* Turma Ranking Display Styles */
+.turma-body {
+    background-color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ranking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 40px;
+}
+
+.voltar-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Audiowide', cursive;
+}
+
+.voltar-icon-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 8px 18px;
+    border: 2px solid #4da6ff;
+    border-radius: 50px 10px 10px 50px;
+    color: #4da6ff;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.voltar-btn:hover .voltar-icon-container {
+    background-color: #4da6ff;
+    color: white;
+    transform: scale(1.05);
+}
+
+.voltar-arrow {
+    font-size: 16px;
+    color: inherit;
+    margin-right: 8px;
+}
+
+.turma-title-blue {
+    font-family: 'Audiowide', cursive;
+    color: #005aff;
+    font-size: 22px;
+    margin-left: 20px;
+}
+
+.ranking-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.student-card {
+    background-color: #e6f7ff;
+    border-radius: 15px;
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 0 2px #00c3ff;
+    /* Custom clip path to match the sci-fi corners in the reference */
+    clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%);
+}
+
+.avatar-placeholder {
+    width: 125px;
+    height: 125px;
+    margin-top: 15px;
+    border: 4px solid black;
+    border-radius: 50%;
+    background-position: center;
+    background-size: cover;
+}
+
+.student-card .medals {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.medal-slot {
+    width: 25px;
+    height: 25px;
+    background-color: gold;
+    border-radius: 50%;
+    border: 2px solid #a86c00;
+}
+
+.student-card .trophy {
+    position: absolute;
+    top: -5px;
+    right: 15px;
+    font-size: 40px;
+    z-index: 5;
+}
+
+.student-name {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    color: black;
+    margin-top: 15px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.xp-container {
+    width: 95%;
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.xp-bar-bg {
+    flex: 1;
+    height: 18px;
+    background-color: transparent;
+    border: 2px solid #00c3ff;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    background-color: #00c3ff;
+    width: auto;
+    min-width: 10%;
+}
+
+.xp-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: black;
+    margin-left: 10px;
+}
+
+@media (max-width: 900px) {
+    .ranking-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 600px) {
+    .ranking-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.edit-btn-white-blue {
+    background-color: white;
+    color: #4da6ff;
+    border: 2px solid #4da6ff;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-family: 'Audiowide', cursive;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.edit-btn-white-blue:hover {
+    background-color: #4da6ff;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* NOVO VISUAL SCI-FI STUDENT CARD */
+.sci-fi-card {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    margin: 0 auto;
+    z-index: 1;
+}
+
+.sci-fi-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #e0f6fc;
+    z-index: -1;
+    clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+}
+
+.sci-fi-border {
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background-color: #00c3ff;
+    z-index: -2;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+}
+
+.sci-fi-top-grid {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-bottom: 5px;
+    height: 95px;
+}
+
+.sci-fi-badges-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    width: 80px; 
+    align-items: center;
+    justify-items: center;
+}
+
+.badge-slot {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: #106be0;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.badge-slot.read-only { cursor: default; }
+
+.badge-slot:not(.read-only):hover {
+    transform: scale(1.15);
+}
+
+.sci-fi-portrait-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.avatar-sci-fi {
+    width: 90px;
+    height: 90px;
+    background-color: white;
+    border: 3px solid #00bad3;
+    border-radius: 15px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.student-name-pill {
+    background-color: white;
+    color: black;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    margin-top: -10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    text-align: center;
+    border: 2px solid white; 
+    box-shadow: 0 0 0 1px #eee;
+    z-index: 5;
+}
+
+.sci-fi-xp-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+    padding: 0 5px;
+}
+
+.sci-fi-xp-bar-container {
+    flex: 1;
+    height: 15px;
+    border: 2px solid #00c3ff;
+    border-radius: 10px;
+    background: transparent;
+    overflow: hidden;
+}
+
+.sci-fi-xp-fill {
+    height: 100%;
+    background-color: #00c3ff;
+}
+
+.sci-fi-xp-label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 13px;
+    color: black;
+}
+
+/* Badge Overlay Picker */
+.badge-overlay-mask {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.badge-picker-box {
+    background: rgba(10, 79, 223, 0.95);
+    border: 2px solid #00c3ff;
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.badge-picker-header {
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-family: 'Audiowide', cursive;
+    margin-bottom: 10px;
+}
+
+.badge-option {
+    width: 60px; height: 60px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+}
+.badge-option:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 10px #00c3ff;
+}
+.badge-option.clear-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ff4c4c;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 15px;
+    border: 2px dashed #ff4c4c;
+    background: transparent;
+}
+

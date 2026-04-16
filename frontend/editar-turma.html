@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Turma - Ranking NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+    
+    <div class="decoration-box top-deco"><div class="deco-inner"></div></div>
+    
+    <main class="login-main">
+        <header class="login-header">
+            <div class="header-left" style="display: flex; align-items: center; gap: 15px;">
+                <button class="voltar-btn" onclick="window.history.back()">
+                    <div class="voltar-icon-container">
+                        <span class="voltar-arrow">◀</span>
+                        <span>VOLTAR</span>
+                    </div>
+                </button>
+                <div style="font-size: 60px;">🏆</div> 
+            </div>
+            
+            <div class="header-center" onclick="goToPage('menu.html')" style="cursor: pointer;">
+                <h1 class="header-title">SISTEMA DE RANKING</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="simple-logo">
+                    <span class="sl-top">NCP</span>
+                    <span class="sl-bot">CURSOS</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="login-wrapper" style="max-width: 900px; width: 100%;">
+            <div class="login-box-blue admin-box-expanded" style="max-width: 100%;">
+                <h2 class="login-heading">EDITAR TURMA (XP)</h2>
+                
+                <form id="edit-class-form" class="login-form-blue">
+                    
+                    <div class="input-row" style="max-width: 500px; margin: 0 auto;">
+                        <label for="class-name">TURMA:</label>
+                        <input type="text" id="class-name" name="class-name" required autocomplete="off">
+                    </div>
+
+                    <div id="alunos-container" class="alunos-scroll-container" style="max-height: 400px;">
+                        <!-- JS vai injetar alunos originais aqui com campos expandidos de estatísticas -->
+                    </div>
+
+                    <div class="admin-actions" style="max-width: 500px; margin: 0 auto;">
+                        <button type="button" class="login-submit-btn secondary-btn" onclick="addExpandedStudentFields()">+ ALUNO</button>
+                        <button type="submit" class="login-submit-btn">ATUALIZAR TURMA</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div class="decoration-box bot-deco"><div class="deco-inner"></div></div>
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('id');
+            if (slug && typeof loadClassForEdit === "function") {
+                loadClassForEdit(slug);
+            }
+        });
+    </script>
+</body>
+</html>

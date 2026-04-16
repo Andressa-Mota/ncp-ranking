@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Ranking NCP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        .report-section { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid #00c3ff; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+        
+        /* Acordeão Alunos */
+        .students-list { margin-top: 40px; }
+        .report-accordion { background: rgba(0,195,255,0.1); border: 1px solid #00c3ff; border-radius: 8px; margin-bottom: 0px; cursor: pointer; padding: 15px; color: white; display: flex; justify-content: space-between; align-items: center; font-family: 'Audiowide', cursive; transition: 0.3s; margin-top: 10px; }
+        .report-accordion:hover { background: rgba(0,195,255,0.3); }
+        .report-content { display: none; background: rgba(0,0,0,0.5); border: 1px solid #4da6ff; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; color: white; }
+        
+        /* Gráficos e Pódio Horizontal Novo Estilo */
+        .ranking-podiums-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: stretch; margin-bottom: 40px; }
+        .stat-card { background: white; border: 4px solid; border-radius: 12px; padding: 10px; text-align: center; width: 100%; max-width: 250px; flex: 1; min-width: 200px; display: flex; flex-direction: column; height: 450px; box-sizing: border-box; }
+        .stat-title { font-family: sans-serif; font-size: 13px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; background: transparent; display: block; border: none; letter-spacing: 0px; box-shadow: none; padding: 0; }
+        
+        .podium-container { display: flex; align-items: flex-end; justify-content: center; height: 350px; gap: 12px; flex: 1; margin-top: 20px; }
+        .podium-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 70px; border-radius: 35px; position: relative; }
+        
+        .podium-text-container { writing-mode: vertical-lr; transform: rotate(180deg); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; color: #111; font-family: sans-serif; font-size: 16px; font-weight: 900; padding-top: 70px; padding-bottom: 15px; height: 100%; box-sizing: border-box; }
+        .podium-name { white-space: nowrap; overflow: hidden; margin-left: 5px; } 
+        .podium-val { white-space: nowrap; margin-left: 5px; font-weight: 900; color: white; text-shadow: 1px 1px 0 #000; }
+        
+        .podium-rank { border-radius: 50%; width: 50px; height: 50px; position: absolute; bottom: 10px; left: 10px; display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 20px; font-weight: 900; color: white; }
+
+        /* Themas Pedidos: Branco/Preto + Cor Básica (Baseados na Imagem) */
+        /* Red: Maiores Notas */
+        .red-theme { border-color: #E24131; }
+        .red-theme .stat-title { color: #E24131; }
+        .red-theme .podium-col { background-color: #E24131; }
+        .red-theme .podium-rank { background-color: #F81B15; }
+
+        /* Green: Menos Tentativas */
+        .green-theme { border-color: #37B928; }
+        .green-theme .stat-title { color: #37B928; }
+        .green-theme .podium-col { background-color: #37B928; }
+        .green-theme .podium-rank { background-color: #00B150; }
+
+        /* Purple: Comportamento */
+        .purple-theme { border-color: #8C51A6; }
+        .purple-theme .stat-title { color: #8C51A6; }
+        .purple-theme .podium-col { background-color: #8C51A6; }
+        .purple-theme .podium-rank { background-color: #79199C; }
+
+        /* Blue: Mais Presenças */
+        .blue-theme { border-color: #4B73FC; }
+        .blue-theme .stat-title { color: #4B73FC; }
+        .blue-theme .podium-col { background-color: #4B73FC; }
+        .blue-theme .podium-rank { background-color: #7193FE; }
+    </style>
+</head>
+<body class="login-body">
+    
+    <main class="login-main" style="max-width: 1200px; width: 95%;">
+        <header class="ranking-header">
+            <div class="header-left" style="display: flex; align-items: center;">
+                <button class="voltar-btn" onclick="const urlParams = new URLSearchParams(window.location.search); window.location.href = 'turma.html?id=' + urlParams.get('id');">
+                    <div class="voltar-icon-container">
+                        <span class="voltar-arrow">◀</span>
+                        <span>VOLTAR</span>
+                    </div>
+                </button>
+            </div>
+            <div class="header-center" style="display: flex; flex-direction: column; align-items: center;">
+                <h1 class="header-title">RANKING PARA DESTAQUES DO MÊS</h1>
+                <h2 class="sub-title" id="turma-title" style="font-family: 'Press Start 2P', cursive; font-size: 16px; margin-top: 5px;">CARREGANDO...</h2>
+                <h3 class="sub-title" style="color: #f8b500; font-size: 14px; margin-top: 10px; font-family: 'Audiowide', cursive;">:: RELATÓRIO ANALÍTICO ::</h3>
+            </div>
+            <div class="header-right" id="header-right-actions"></div>
+        </header>
+
+        <section class="ranking-podiums-container" id="top-rankings">
+            <!-- Rankings dinâmicos injectados via script.js -->
+        </section>
+        
+        <section class="report-section students-list" id="students-report-list">
+            <!-- Lista de alunos em sanfona injetada via script.js -->
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                alert("Acesso negado. Apenas admin visualiza relatórios.");
+                window.location.href = "index.html";
+                return;
+            }
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('id');
+            if (slug && typeof window.loadReport === 'function') {
+                window.loadReport(slug);
+            }
+        });
+
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                btn.querySelector('.icon').innerText = "▼";
+            } else {
+                content.style.display = "block";
+                btn.querySelector('.icon').innerText = "▲";
+            }
+        }
+    </script>
+</body>
+</html>
