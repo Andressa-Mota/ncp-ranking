@@ -47,6 +47,7 @@ class StudentSchema(BaseModel):
     tentativas_teste: int = 0
     comportamento_bom: bool = True
     badges: List[str] = ["", "", "", ""]
+    xp_extra: int = 0
 
 class ClassSchema(BaseModel):
     nome_turma: str
@@ -130,9 +131,10 @@ async def get_class_details(slug: str, admin: Optional[str] = None, userType: Op
     if userType == "admin" and admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado. Você não possui permissão para visualizar as métricas desta turma.")
     
-    projection = {"_id": 0, "senha": 0}
+    projection = {"_id": 0}
     if userType != "admin":
         projection["usuario"] = 0
+        projection["senha"] = 0
 
     cursor = db["alunos"].find({"class_id": slug}, projection).sort("xp_total", -1)
     alunos = []
@@ -165,6 +167,7 @@ class StudentUpdate(BaseModel):
     comportamentos: List[str] = []
     testes_tentativas: List[int] = []
     badges: List[str] = ["", "", "", ""]
+    xp_extra: int = 0
 
 class ClassUpdateSchema(BaseModel):
     nome_turma: str
@@ -216,6 +219,12 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
             if t > 0:
                 # 1 tent = 100 xp, adicionais perdem 10
                 xp += max(0, 100 - ((t - 1) * 50))
+                
+        # Adicionar XP Bônus Manual, limitando a 10 no backend por segurança
+        xp_extra = doc.get("xp_extra", 0)
+        xp_extra = min(10, max(0, xp_extra))
+        xp += xp_extra
+        doc["xp_extra"] = xp_extra
             
         doc["xp_total"] = xp
         

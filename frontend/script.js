@@ -249,10 +249,10 @@ window.openBadgeSelector = function(nome, slotIndex, htmlId) {
             <div class="badge-picker-box">
                 <div class="badge-picker-header">ESCOLHA UMA IMAGEM</div>
                 <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;">
-                    <div class="badge-option" style="background-image: url('images/comportamento.png')" onclick="applySelectedBadge('comportamento.png')"></div>
-                    <div class="badge-option" style="background-image: url('images/eficiencia.png')" onclick="applySelectedBadge('eficiencia.png')"></div>
-                    <div class="badge-option" style="background-image: url('images/notas.png')" onclick="applySelectedBadge('notas.png')"></div>
-                    <div class="badge-option" style="background-image: url('images/presenca.png')" onclick="applySelectedBadge('presenca.png')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges-login/comportamento-login.svg')" onclick="applySelectedBadge('comportamento-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges-login/eficiencia-login.svg')" onclick="applySelectedBadge('eficiencia-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges-login/notas-login.svg')" onclick="applySelectedBadge('notas-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges-login/presença-login.svg')" onclick="applySelectedBadge('presença-login.svg')"></div>
                     <div class="badge-option clear-btn" onclick="applySelectedBadge('')">X</div>
                 </div>
                 <div style="width:100%;text-align:center;margin-top:10px;">
@@ -285,7 +285,8 @@ window.applySelectedBadge = async function(imageName) {
             slotContainer.setAttribute('data-badges', JSON.stringify(currentBadges));
             const slot = slotContainer.children[currentBadgeIndex];
             if (imageName) {
-                slot.style.backgroundImage = `url('images/${imageName}')`;
+                let folder = imageName.endsWith('.svg') ? 'badges-login' : 'badges';
+                slot.style.backgroundImage = `url('images/${folder}/${imageName}')`;
                 slot.innerText = '';
             } else {
                 slot.style.backgroundImage = 'none';
@@ -328,9 +329,15 @@ window.loadClassRanking = async function (slug) {
             const badgesArr = Array.isArray(aluno.badges) ? aluno.badges : ["", "", "", ""];
             let badgesHtml = "";
             for(let i=0; i<4; i++){
-                const b = badgesArr[i];
+                let b = badgesArr[i];
                 if(b) {
-                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
+                   if (b === 'comportamento.png') b = 'comportamento-login.svg';
+                   if (b === 'eficiencia.png') b = 'eficiencia-login.svg';
+                   if (b === 'notas.png') b = 'notas-login.svg';
+                   if (b === 'presenca.png') b = 'presença-login.svg';
+                   
+                   let folder = b.endsWith('.svg') ? 'badges-login' : 'badges';
+                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/${folder}/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
                 } else if(isAdmin) {
                    badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})">+</div>`;
                 } else {
@@ -526,6 +533,10 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
             
             <!-- Info XP Estatísticas Array -->
             <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 10px; border-left: 2px dashed #00c3ff; padding-left: 15px;">
+                <div class="student-row" title="Esse pode ser um xp extra dado pelo professor, se assim ele decidir, como por exemplo, ganhar nos jogos da semana interativa" style="align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px;">
+                    <label style="width: auto; font-family: 'Press Start 2P', cursive; font-size: 8px; color: gold; cursor: help;">BÔNUS XP (Max 10):</label>
+                    <input type="number" name="student_xpextra_${studentIdx}" value="${aluno && aluno.xp_extra ? aluno.xp_extra : 0}" min="0" max="10" placeholder="0" style="background-color: transparent; border: 1px solid gold; border-radius: 20px; color: gold; padding: 2px 10px; font-family: 'Audiowide'; font-size: 11px; width: 60px; outline: none; margin-left:10px;">
+                </div>
                 <div class="student-row" style="align-items: start; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px;">
                     <label style="width: 100%">PRESENÇAS (Máx 5): 
                         <button type="button" onclick="addPresenca(this)" style="background:transparent; color: #f8b500; font-weight:bold; border:none; cursor:pointer;">[+ Dia]</button>
@@ -630,6 +641,9 @@ window.loadClassForEdit = async function (slug) {
                     if (block.dataset.badges) savedBadges = JSON.parse(block.dataset.badges);
                 } catch(e) {}
 
+                const xpExtraInput = block.querySelector(`input[name^="student_xpextra_"]`);
+                const xpExtra = xpExtraInput && xpExtraInput.value ? parseInt(xpExtraInput.value) : 0;
+
                 alunos.push({
                     nome: nameInput,
                     usuario: userInput,
@@ -639,7 +653,8 @@ window.loadClassForEdit = async function (slug) {
                     notas: arrayNotas,
                     presencas: arrayPresencas,
                     comportamentos: arrayComps,
-                    testes_tentativas: arrayTestes
+                    testes_tentativas: arrayTestes,
+                    xp_extra: xpExtra
                 });
             }
 

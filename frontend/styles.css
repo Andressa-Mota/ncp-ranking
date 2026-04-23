@@ -537,12 +537,12 @@ body {
 .sci-fi-card {
     position: relative;
     width: 100%;
-    max-width: 300px;
-    height: 50vh;
+    max-width: 330px;
+    min-height: 250px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 15px;
+    padding: 20px;
     margin: 0 auto;
     z-index: 1;
 }
@@ -569,26 +569,27 @@ body {
     justify-content: space-between;
     align-items: stretch;
     margin-bottom: 5px;
-    height: 95px;
+    height: auto;
+    flex: 1;
 }
 
 .sci-fi-badges-left {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 4px;
-    width: 100px; 
+    gap: 10px;
+    width: 160px; 
     align-items: center;
     justify-items: center;
 }
 
 .badge-slot {
-    width: 46px;
-    height: 46px;
+    width: 65px;
+    height: 65px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 38px;
+    font-size: 50px;
     font-weight: 900;
     color: #106be0;
     cursor: pointer;
@@ -604,6 +605,11 @@ body {
     transform: scale(1.15);
 }
 
+.badge-slot {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
 .sci-fi-portrait-right {
     flex: 1;
     display: flex;
@@ -612,8 +618,8 @@ body {
 }
 
 .avatar-sci-fi {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     background-color: white;
     border: 3px solid #00bad3;
     border-radius: 15px;
@@ -626,10 +632,10 @@ body {
     background-color: white;
     color: black;
     font-family: 'Press Start 2P', cursive;
-    font-size: 10px;
-    padding: 6px 15px;
+    font-size: 11px;
+    padding: 8px 15px;
     border-radius: 20px;
-    margin-top: -10px;
+    margin-top: 15px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -644,14 +650,14 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     gap: 10px;
     padding: 0 5px;
 }
 
 .sci-fi-xp-bar-container {
     flex: 1;
-    height: 15px;
+    height: 25px;
     border: 2px solid #00c3ff;
     border-radius: 10px;
     background: transparent;
@@ -722,5 +728,153 @@ body {
     font-size: 15px;
     border: 2px dashed #ff4c4c;
     background: transparent;
+}
+
+/* Custom sections on login page */
+.info-sections {
+    width: 100%;
+    margin-top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.emblemas-section {
+    background-color: white;
+    padding: 10px 20px;
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.emblemas-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 900px;
+    width: 100%;
+    margin: 0;
+}
+
+.emblemas-header h2 {
+    font-size: 20px;
+    color: black;
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.em-logo {
+    position: absolute;
+    right: 20px;
+    top: -20px;
+    transform: scale(0.9);
+}
+
+.emblemas-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.emblema-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 230px;
+    text-align: center;
+}
+
+.emblema-card img {
+    width: 160px;
+    height: 160px;
+    margin-bottom: 20px;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.emblema-card p {
+    font-size: 11px;
+    color: black;
+    line-height: 1.5;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.contatos-section {
+    background-color: #005aff;
+    padding: 10px 20px;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contatos-section h2 {
+    text-align: center;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 20px;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.contatos-grid {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.contato-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    width: 200px;
+    text-align: center;
+}
+
+.contato-card img {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 10px;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.contato-card p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: black;
+    line-height: 1.5;
+}
+
+.dev-icon {
+    font-size: 30px;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
 }
 
