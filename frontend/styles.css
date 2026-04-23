@@ -14,34 +14,37 @@ body {
 
 /* Decorations (top and bottom cyan borders from the image) */
 .decoration-box {
-    width: 600px;
-    height: 30px;
+    width: 70%;
+    max-width: 900px;
+    height: 40px;
     margin: 0 auto;
     position: relative;
-    border: 3px solid cyan;
+    background-color: #00e5ff; /* Solid fill */
 }
 .top-deco {
-    border-top: none;
-    border-bottom: 3px solid cyan;
-    /* create polygon slopes using border tricks or clip path */
     clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
-    background: transparent;
-    margin-bottom: 20px;
+    margin-bottom: 0px; /* Reduced to bring items closer */
 }
 .bot-deco {
-    border-bottom: none;
-    border-top: 3px solid cyan;
-    clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
-    background: transparent;
-    margin-top: auto; 
+    height: 10px;
+    background-color: #00e5ff;
+    border-radius: 20px;
+    margin-top: auto; /* Push to bottom of fold */
+    margin-bottom: 20px;
+    margin-inline: auto; /* Center horizontally */
+    width: 80%;
 }
-
 
 /* Login Layout */
 .login-body {
+    display: block; /* Remove flex from body to prevent pulling below-fold items */
+}
+
+.login-fold {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 100vh; /* Exactly 100vh minimum for the first section */
 }
 
 .login-main {
@@ -50,9 +53,9 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px; /* Spread items further to edges */
     margin: 0 auto;
-    padding: 20px;
+    padding: 5px 40px 20px 40px; /* Reduced top padding */
 }
 
 .login-header {
@@ -60,7 +63,7 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 40px;
+    margin-bottom: 10px; /* Reduced from 40px to keep title closer to box */
 }
 
 .header-left {
@@ -83,7 +86,7 @@ body {
 
 .header-title {
     font-family: 'Press Start 2P', cursive;
-    font-size: 16px; 
+    font-size: 20px; /* slightly scaled up */
     color: #000;
     text-align: center;
 }
@@ -97,7 +100,7 @@ body {
 .sl-top {
     font-family: Arial, sans-serif;
     font-weight: 900;
-    font-size: 40px;
+    font-size: 55px; /* Grown */
     color: #4da6ff;
     line-height: 1;
     letter-spacing: -2px;
@@ -106,10 +109,27 @@ body {
     font-family: 'Audiowide', sans-serif;
     background-color: #4da6ff;
     color: white;
-    font-size: 10px;
-    padding: 2px 10px;
+    font-size: 14px; /* Grown */
+    padding: 3px 14px;
     border-radius: 4px;
     letter-spacing: 2px;
+}
+
+/* Revert sizing overrides for ranking screen to prevent layout breaking */
+.turma-body .sl-top {
+    font-size: 40px;
+}
+.turma-body .sl-bot {
+    font-size: 10px;
+    padding: 2px 10px;
+}
+.turma-body .header-title {
+    font-size: 16px; 
+}
+
+/* Enlarge trophy emoji which has inline style */
+.header-left > div:last-child {
+    font-size: 90px !important;
 }
 
 /* Login Box Exact Stylings */
@@ -121,10 +141,10 @@ body {
 
 .login-box-blue {
     background-color: #0a4fdf; /* Strict blue from screenshot */
-    border-radius: 12px;
-    padding: 30px;
+    border-radius: 20px; /* More rounded */
+    padding: 28px 32px;
     width: 100%;
-    max-width: 480px; /* matched to proportions */
+    max-width: 416px; /* 20% smaller */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -143,7 +163,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px; /* scaled down slightly */
     align-items: center;
 }
 
@@ -157,33 +177,33 @@ body {
 .input-row label {
     color: white;
     font-family: 'Audiowide', cursive;
-    font-size: 14px;
+    font-size: 14px; /* 20% smaller roughly */
     letter-spacing: 1px;
-    width: 25%;
+    width: 30%; /* adjusted */
     text-align: left;
 }
 
 .input-row input {
-    width: 75%;
+    width: 70%;
     background-color: transparent;
     border: 2px solid white;
-    border-radius: 50px;
-    height: 40px;
+    border-radius: 30px; /* pill shape */
+    height: 38px; /* scaled down */
     padding: 0 15px;
     color: white;
     font-family: 'Audiowide', cursive;
-    font-size: 16px;
+    font-size: 15px;
     outline: none;
 }
 
 .login-submit-btn {
-    margin-top: 15px;
+    margin-top: 5px;
     background-color: #ffffff;
     color: #000;
     font-family: 'Audiowide', cursive;
     font-size: 15px;
     border: none;
-    border-radius: 50px;
+    border-radius: 30px;
     padding: 10px 45px;
     cursor: pointer;
     text-transform: uppercase;
@@ -528,9 +548,288 @@ body {
 }
 
 .edit-btn-white-blue:hover {
-    background-color: #4da6ff;
-    color: white;
-    transform: scale(1.05);
+    background-color: #f0f0f0;
+}
+
+/* ========================================================
+   ADMIN MENU & RESPONSIVITY
+   ======================================================== */
+
+.admin-menu-container {
+    display: flex;
+    align-items: center;
+}
+.hamburger-icon {
+    display: none; /* hidden on standard screens */
+}
+.admin-dropdown {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.btn-relatorio {
+    background-color: #f8b500 !important;
+    color: #000 !important;
+    border: 1px solid #f8b500 !important;
+}
+
+@media (max-width: 768px) {
+    /* Hide geometric decorations in mobile (from mockup) */
+    .top-deco, .bot-deco {
+        display: none !important;
+    }
+
+    /* Enforce lateral blue borders to entire viewport (from mockup) */
+    body {
+        border-left: 18px solid #00c3ff;
+        border-right: 18px solid #00c3ff;
+        box-sizing: border-box;
+        padding-top: 20px; /* offset since top deco is gone */
+    }
+
+    /* Base overrides for mobile view */
+    .login-fold {
+        min-height: auto !important; /* Removes the huge 100vh gap on mobile */
+        padding-bottom: 30px;
+    }
+    
+    .login-main {
+        padding: 5px 10px 20px 10px;
+        flex: unset; /* Stops the main area from stretching */
+    }
+    .login-box-blue {
+        padding: 15px;
+        max-width: 280px; /* Slimmer login box */
+        border-radius: 15px; /* Softer radius on small box */
+    }
+    
+    .login-form-blue .input-row input {
+        height: 30px;
+        font-size: 12px;
+    }
+    .login-submit-btn {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+
+    /* Ranking Header Structure Override */
+    .ranking-header, .login-header {
+        flex-wrap: wrap; /* allow title to drop down */
+        margin-bottom: 20px;
+        align-items: center; /* PERFECT vertical centering for row 1 items */
+        justify-content: space-between;
+    }
+    .ranking-header .header-left, .ranking-header .header-right,
+    .login-header .header-left, .login-header .header-right {
+        order: 1; /* Both are on row 1 */
+    }
+    
+    /* Login Header specific */
+    .login-header .header-left {
+        width: auto;
+        flex: unset;
+        gap: 5px; /* Minimal gap */
+    }
+    
+    /* Ranking Header specific overrides */
+    .ranking-header .header-left {
+        display: contents !important; /* Unpacks children into the wrapper */
+    }
+    .voltar-btn {
+        order: 1;
+        margin-right: auto; /* Push right side naturally */
+        padding: 0; /* Clear padding from btn */
+    }
+
+    .ranking-header .header-right, .login-header .header-right {
+        flex: unset;
+        width: auto;
+        margin-left: 0; /* Clear auto push since voltar-btn pushes right */
+        gap: 10px !important; 
+    }
+    .ranking-header .header-center, .login-header .header-center {
+        order: 3; /* Move to row 3 since Turma Title is row 2 */
+        width: 100%;
+        margin-top: 15px; /* push down ranking title */
+        flex: unset;
+    }
+    
+    #turma-title {
+        order: 2; /* Force to row 2 */
+        width: 100%;
+        max-width: 100% !important; /* Full width */
+        font-size: 16px !important; /* Make it more legible */
+        text-align: center !important; /* Centered as requested */
+        line-height: 1.1;
+        margin-top: 20px !important; /* Distance from row 1 */
+        margin-left: 0 !important; /* Override the 20px default */
+    }
+    .header-title {
+        font-size: 10px !important; /* Small enough to fit in one line */
+        white-space: nowrap;
+        margin-top: 0px !important;
+    }
+    
+    .sl-top {
+        font-size: 16px !important;
+    }
+    .sl-bot {
+        font-size: 5px !important;
+        padding: 1px 4px !important;
+        letter-spacing: 1px;
+    }
+
+    /* Universal Mobile Trophy Downsizing */
+    .header-left > div:last-child {
+        font-size: 30px !important; /* Shrunk trophy */
+    }
+    
+    .voltar-icon-container {
+        padding: 4px 8px; /* Real padding reduction */
+        font-size: 8px;
+        gap: 3px;
+        border-radius: 12px;
+    }
+    .voltar-arrow {
+        font-size: 10px;
+        margin-right: 0;
+    }
+
+    /* Mobile Admin Hamburger Dropdown */
+    .admin-menu-container {
+        position: relative;
+    }
+    .hamburger-icon {
+        display: block;
+        font-size: 26px !important; /* Perfect proportion with logo */
+        color: #005aff;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .admin-dropdown {
+        display: none; /* hidden by default on mobile */
+        position: absolute;
+        top: 45px;
+        right: 0;
+        flex-direction: column;
+        background-color: white;
+        border: 2px solid #005aff;
+
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+        z-index: 1000;
+        min-width: 150px;
+    }
+    .admin-dropdown.show {
+        display: flex;
+    }
+
+    /* Vertical Stacking for Input Rows and Menu */
+    .input-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .input-row label, .input-row input {
+        width: 100%;
+    }
+    .student-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+    .student-row label, .student-row input, .student-row select {
+        width: 100% !important;
+    }
+    
+    .menu-buttons-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px; /* Shrunk gap */
+    }
+    .class-btn {
+        width: 100%;
+        max-width: 240px; /* Slimmer buttons */
+        padding: 12px 20px !important; /* Smaller inside padding */
+        font-size: 14px !important; /* Smaller text */
+    }
+    .sub-title {
+        font-size: 16px !important; /* Shrunk TURMAS title */
+        letter-spacing: 1px !important;
+    }
+
+    /* Ranking Cards Mobile Single Column */
+    .ranking-grid {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .student-card {
+        width: 95% !important;
+        height: auto !important;
+        min-height: 300px;
+    }
+
+    /* Info Sections Mobile Fixes (Index.html) */
+    .info-sections {
+        height: auto !important; /* Allow scrolling */
+    }
+    .emblemas-section {
+        height: auto !important;
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+    .emblemas-header {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        margin-bottom: 20px;
+    }
+    .em-logo {
+        display: none !important; /* Hide logo under EMBLEMAS on mobile as requested */
+    }
+    .emblemas-grid {
+        flex-direction: column !important;
+        align-items: center;
+        flex-wrap: nowrap !important;
+        gap: 30px !important;
+    }
+    .emblema-card img {
+        width: 100px !important;
+        height: 100px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    /* Contatos Section - Strict Horizontal */
+    .contatos-section {
+        height: auto !important;
+        padding: 20px 5px !important;
+    }
+    .contatos-grid {
+        flex-wrap: nowrap !important;
+        gap: 5px !important;
+        justify-content: space-between !important;
+    }
+    .contato-card {
+        width: auto !important;
+        flex: 1;
+    }
+    .contato-card img {
+        width: 25px !important;
+        height: 25px !important;
+        margin-bottom: 5px !important;
+    }
+    .dev-icon {
+        font-size: 16px !important;
+        height: 25px !important;
+        margin-bottom: 5px !important;
+    }
+    .contato-card p {
+        font-size: 5px !important; /* Extreme small text to fit horizontal */
+    }
 }
 
 /* NOVO VISUAL SCI-FI STUDENT CARD */

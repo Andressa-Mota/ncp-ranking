@@ -152,16 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const userInput = block.querySelector(`input[name^="student_user_"]`).value;
                 const passInput = block.querySelector(`input[name^="student_pass_"]`).value;
 
-                const imgInput = block.querySelector(`input[name^="student_img_"]`);
-                let fotoBase64 = "";
-
-                if (imgInput && imgInput.files && imgInput.files.length > 0) {
-                    try {
-                        fotoBase64 = await getBase64(imgInput.files[0]);
-                    } catch (e) {
-                        console.error("Erro ao converter foto", e);
-                    }
-                }
+                const imgSelect = block.querySelector(`select[name^="student_img_select_"]`);
+                let fotoBase64 = imgSelect ? imgSelect.value : "images/perfis/perfil.svg";
 
                 alunos.push({
                     nome: nameInput,
@@ -213,8 +205,15 @@ window.addStudentFields = function () {
             <input type="text" name="student_name_${studentIdx}" placeholder="Nome do Aluno..." required autocomplete="off">
         </div>
         <div class="student-row">
-            <label>FOTO:</label>
-            <input type="file" name="student_img_${studentIdx}" accept="image/*">
+            <label>PERFIL:</label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img id="img_preview_${studentIdx}" src="images/perfis/perfil.svg" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
+                <select name="student_img_select_${studentIdx}" onchange="document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
+                    <option value="images/perfis/perfil.svg" style="color: black;" selected>Neutro</option>
+                    <option value="images/perfis/masculino.svg" style="color: black;">Masculino</option>
+                    <option value="images/perfis/feminino.svg" style="color: black;">Feminino</option>
+                </select>
+            </div>
         </div>
         <div class="student-row">
             <label>USUÁRIO:</label>
@@ -249,10 +248,10 @@ window.openBadgeSelector = function(nome, slotIndex, htmlId) {
             <div class="badge-picker-box">
                 <div class="badge-picker-header">ESCOLHA UMA IMAGEM</div>
                 <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;">
-                    <div class="badge-option" style="background-image: url('images/badges-login/comportamento-login.svg')" onclick="applySelectedBadge('comportamento-login.svg')"></div>
-                    <div class="badge-option" style="background-image: url('images/badges-login/eficiencia-login.svg')" onclick="applySelectedBadge('eficiencia-login.svg')"></div>
-                    <div class="badge-option" style="background-image: url('images/badges-login/notas-login.svg')" onclick="applySelectedBadge('notas-login.svg')"></div>
-                    <div class="badge-option" style="background-image: url('images/badges-login/presença-login.svg')" onclick="applySelectedBadge('presença-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges/comportamento-login.svg')" onclick="applySelectedBadge('comportamento-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges/eficiencia-login.svg')" onclick="applySelectedBadge('eficiencia-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges/notas-login.svg')" onclick="applySelectedBadge('notas-login.svg')"></div>
+                    <div class="badge-option" style="background-image: url('images/badges/presença-login.svg')" onclick="applySelectedBadge('presença-login.svg')"></div>
                     <div class="badge-option clear-btn" onclick="applySelectedBadge('')">X</div>
                 </div>
                 <div style="width:100%;text-align:center;margin-top:10px;">
@@ -285,8 +284,7 @@ window.applySelectedBadge = async function(imageName) {
             slotContainer.setAttribute('data-badges', JSON.stringify(currentBadges));
             const slot = slotContainer.children[currentBadgeIndex];
             if (imageName) {
-                let folder = imageName.endsWith('.svg') ? 'badges-login' : 'badges';
-                slot.style.backgroundImage = `url('images/${folder}/${imageName}')`;
+                slot.style.backgroundImage = `url('images/badges/${imageName}')`;
                 slot.innerText = '';
             } else {
                 slot.style.backgroundImage = 'none';
@@ -318,7 +316,7 @@ window.loadClassRanking = async function (slug) {
             const card = document.createElement('div');
             card.className = 'sci-fi-card';
 
-            const trophyHtml = index === 0 ? `<div class="trophy" style="position: absolute; top:-20px; left:-10px; font-size:40px; z-index:10; filter: drop-shadow(0 0 5px gold);">🏆</div>` : '';
+            const trophyHtml = index === 0 ? `<div class="trophy" style="position: absolute; top:-15px; left:-15px; font-size:35px; z-index:10; filter: drop-shadow(0 0 5px gold);">🏆</div>` : '';
 
             const maxXP = 2050;
             const percentage = Math.min(100, Math.max(0, (aluno.xp_total / maxXP) * 100));
@@ -336,8 +334,7 @@ window.loadClassRanking = async function (slug) {
                    if (b === 'notas.png') b = 'notas-login.svg';
                    if (b === 'presenca.png') b = 'presença-login.svg';
                    
-                   let folder = b.endsWith('.svg') ? 'badges-login' : 'badges';
-                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/${folder}/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
+                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/badges/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
                 } else if(isAdmin) {
                    badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})">+</div>`;
                 } else {
@@ -370,25 +367,41 @@ window.loadClassRanking = async function (slug) {
 
         const headerRight = document.getElementById('header-right-actions');
         if (userType === 'admin' && headerRight) {
-            let editBtn = document.getElementById('edit-class-btn');
-            if (!editBtn) {
-                editBtn = document.createElement('button');
-                editBtn.id = 'edit-class-btn';
-                editBtn.className = 'edit-btn-white-blue';
+            let adminMenuCnt = document.getElementById('admin-menu-container');
+            if (!adminMenuCnt) {
+                adminMenuCnt = document.createElement('div');
+                adminMenuCnt.id = 'admin-menu-container';
+                adminMenuCnt.className = 'admin-menu-container';
+                
+                const hamburger = document.createElement('div');
+                hamburger.className = 'hamburger-icon';
+                hamburger.innerHTML = '☰';
+                hamburger.onclick = () => {
+                    const dropdown = document.getElementById('admin-dropdown');
+                    dropdown.classList.toggle('show');
+                };
+
+                const dropdown = document.createElement('div');
+                dropdown.id = 'admin-dropdown';
+                dropdown.className = 'admin-dropdown';
+                
+                let relatorioBtn = document.createElement('button');
+                relatorioBtn.className = 'edit-btn-white-blue btn-relatorio';
+                relatorioBtn.textContent = 'RELATÓRIO';
+                relatorioBtn.onclick = () => goToPage('relatorio.html?id=' + slug);
+                
+                let editBtn = document.createElement('button');
+                editBtn.className = 'edit-btn-white-blue btn-editar';
                 editBtn.textContent = 'EDITAR TURMA';
                 editBtn.onclick = () => goToPage('editar-turma.html?id=' + slug);
-                headerRight.insertBefore(editBtn, headerRight.firstChild);
-
-                let relatorioBtn = document.createElement('button');
-                relatorioBtn.id = 'relatorio-class-btn';
-                relatorioBtn.className = 'edit-btn-white-blue';
-                relatorioBtn.textContent = 'RELATÓRIO';
-                relatorioBtn.style.backgroundColor = '#f8b500';
-                relatorioBtn.style.color = '#000';
-                relatorioBtn.style.border = '1px solid #f8b500';
-                relatorioBtn.style.marginRight = '10px';
-                relatorioBtn.onclick = () => goToPage('relatorio.html?id=' + slug);
-                headerRight.insertBefore(relatorioBtn, headerRight.firstChild);
+                
+                dropdown.appendChild(relatorioBtn);
+                dropdown.appendChild(editBtn);
+                
+                adminMenuCnt.appendChild(hamburger);
+                adminMenuCnt.appendChild(dropdown);
+                
+                headerRight.appendChild(adminMenuCnt);
             }
         }
 
@@ -523,10 +536,14 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
                     <input type="text" name="student_pass_${studentIdx}" value="${p}" required>
                 </div>
                 <div class="student-row">
-                    <label>FOTO:</label>
+                    <label>PERFIL:</label>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <img src="${aluno && aluno.foto ? aluno.foto : 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg'}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white;" />
-                        <input type="file" name="student_img_${studentIdx}" accept="image/*" style="width: 130px;">
+                        <img id="img_preview_${studentIdx}" src="${aluno && aluno.foto ? aluno.foto : 'images/perfis/perfil.svg'}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
+                        <select name="student_img_select_${studentIdx}" onchange="document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
+                            <option value="images/perfis/perfil.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/perfil.svg' ? 'selected' : (!aluno || !aluno.foto ? 'selected' : '')}>Neutro</option>
+                            <option value="images/perfis/masculino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/masculino.svg' ? 'selected' : ''}>Masculino</option>
+                            <option value="images/perfis/feminino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/feminino.svg' ? 'selected' : ''}>Feminino</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -630,11 +647,8 @@ window.loadClassForEdit = async function (slug) {
                     if (el.value !== "") arrayTestes.push(parseInt(el.value));
                 });
 
-                const imgInput = block.querySelector(`input[name^="student_img_"]`);
-                let fotoBase64 = block.dataset.oldFoto || '';
-                if (imgInput && imgInput.files && imgInput.files.length > 0) {
-                    try { fotoBase64 = await getBase64(imgInput.files[0]); } catch (e) { }
-                }
+                const imgSelect = block.querySelector(`select[name^="student_img_select_"]`);
+                let fotoBase64 = imgSelect ? imgSelect.value : (block.dataset.oldFoto || 'images/perfis/perfil.svg');
                 
                 let savedBadges = ["","","",""];
                 try {
