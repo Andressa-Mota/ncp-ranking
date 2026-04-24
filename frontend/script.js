@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const driveRegex = /drive\.google\.com\/file\/d\/([^/]+)/;
         const match = url.match(driveRegex);
         if (match && match[1]) {
-            return `https://drive.google.com/uc?id=${match[1]}`;
+            return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
         }
         return url;
     };
@@ -234,7 +234,7 @@ window.addStudentFields = function () {
                         <option value="images/perfis/feminino.svg" style="color: black;">Feminino</option>
                     </select>
                 </div>
-                <input type="text" name="student_img_url_${studentIdx}" placeholder="Link da imagem (Ex: Drive)" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
+                <input type="text" name="student_img_url_${studentIdx}" placeholder="Cole a URL de qualquer imagem" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
             </div>
         </div>
         <div class="student-row">
@@ -568,7 +568,7 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
                                 <option value="images/perfis/feminino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/feminino.svg' ? 'selected' : ''}>Feminino</option>
                             </select>
                         </div>
-                        <input type="text" name="student_img_url_${studentIdx}" placeholder="Link da imagem (Ex: Drive)" value="${aluno && aluno.foto && !aluno.foto.startsWith('images/perfis/') ? aluno.foto : ''}" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
+                        <input type="text" name="student_img_url_${studentIdx}" placeholder="Cole a URL de qualquer imagem" value="${aluno && aluno.foto && !aluno.foto.startsWith('images/perfis/') ? aluno.foto : ''}" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
                     </div>
                 </div>
             </div>
