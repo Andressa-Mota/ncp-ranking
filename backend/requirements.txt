@@ -3,3 +3,4 @@ uvicorn
 motor[srv]
 pydantic
 python-multipart
+certifi

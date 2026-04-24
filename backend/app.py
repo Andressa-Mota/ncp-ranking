@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 import traceback
 import re
+import certifi
 
 app = FastAPI(title="Ranking NCP Backend")
 
@@ -38,7 +39,8 @@ def get_db():
         _client = AsyncIOMotorClient(
             MONGO_URI,
             maxIdleTimeMS=50000,
-            serverSelectionTimeoutMS=10000
+            serverSelectionTimeoutMS=10000,
+            tlsCAFile=certifi.where()
         )
     return _client[DB_NAME]
 
