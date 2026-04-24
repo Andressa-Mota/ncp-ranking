@@ -133,9 +133,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
                 img.src = e.target.result;
             };
-            reader.onerror = error => reject(error);
         });
     }
+
+    // Processa URL de imagem (converte link do Drive para link direto)
+    window.processImageUrl = function(url) {
+        if (!url) return url;
+        const driveRegex = /drive\.google\.com\/file\/d\/([^/]+)/;
+        const match = url.match(driveRegex);
+        if (match && match[1]) {
+            return `https://drive.google.com/uc?id=${match[1]}`;
+        }
+        return url;
+    };
 
     // Save class and students via API
     const addClassForm = document.getElementById("add-class-form");
@@ -153,13 +163,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 const passInput = block.querySelector(`input[name^="student_pass_"]`).value;
 
                 const imgSelect = block.querySelector(`select[name^="student_img_select_"]`);
-                let fotoBase64 = imgSelect ? imgSelect.value : "images/perfis/perfil.svg";
+                const imgUrl = block.querySelector(`input[name^="student_img_url_"]`);
+                let fotoFinal = "images/perfis/perfil.svg";
+                if (imgUrl && imgUrl.value.trim() !== "") {
+                    fotoFinal = processImageUrl(imgUrl.value.trim());
+                } else if (imgSelect) {
+                    fotoFinal = imgSelect.value;
+                }
 
                 alunos.push({
                     nome: nameInput,
                     usuario: userInput,
                     senha: passInput,
-                    foto: fotoBase64
+                    foto: fotoFinal
                 });
             }
 
@@ -206,13 +222,16 @@ window.addStudentFields = function () {
         </div>
         <div class="student-row">
             <label>PERFIL:</label>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img id="img_preview_${studentIdx}" src="images/perfis/perfil.svg" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
-                <select name="student_img_select_${studentIdx}" onchange="document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
-                    <option value="images/perfis/perfil.svg" style="color: black;" selected>Neutro</option>
-                    <option value="images/perfis/masculino.svg" style="color: black;">Masculino</option>
-                    <option value="images/perfis/feminino.svg" style="color: black;">Feminino</option>
-                </select>
+            <div style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img id="img_preview_${studentIdx}" src="images/perfis/perfil.svg" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
+                    <select name="student_img_select_${studentIdx}" onchange="document.querySelector('input[name=student_img_url_${studentIdx}]').value=''; document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
+                        <option value="images/perfis/perfil.svg" style="color: black;" selected>Neutro</option>
+                        <option value="images/perfis/masculino.svg" style="color: black;">Masculino</option>
+                        <option value="images/perfis/feminino.svg" style="color: black;">Feminino</option>
+                    </select>
+                </div>
+                <input type="text" name="student_img_url_${studentIdx}" placeholder="Link da imagem (Ex: Drive)" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
             </div>
         </div>
         <div class="student-row">
@@ -537,13 +556,16 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
                 </div>
                 <div class="student-row">
                     <label>PERFIL:</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <img id="img_preview_${studentIdx}" src="${aluno && aluno.foto ? aluno.foto : 'images/perfis/perfil.svg'}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
-                        <select name="student_img_select_${studentIdx}" onchange="document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
-                            <option value="images/perfis/perfil.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/perfil.svg' ? 'selected' : (!aluno || !aluno.foto ? 'selected' : '')}>Neutro</option>
-                            <option value="images/perfis/masculino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/masculino.svg' ? 'selected' : ''}>Masculino</option>
-                            <option value="images/perfis/feminino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/feminino.svg' ? 'selected' : ''}>Feminino</option>
-                        </select>
+                    <div style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img id="img_preview_${studentIdx}" src="${aluno && aluno.foto ? aluno.foto : 'images/perfis/perfil.svg'}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid white; object-fit: cover;" />
+                            <select name="student_img_select_${studentIdx}" onchange="document.querySelector('input[name=student_img_url_${studentIdx}]').value=''; document.getElementById('img_preview_${studentIdx}').src = this.value" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none;">
+                                <option value="images/perfis/perfil.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/perfil.svg' ? 'selected' : (!aluno || !aluno.foto ? 'selected' : '')}>Neutro</option>
+                                <option value="images/perfis/masculino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/masculino.svg' ? 'selected' : ''}>Masculino</option>
+                                <option value="images/perfis/feminino.svg" style="color: black;" ${aluno && aluno.foto === 'images/perfis/feminino.svg' ? 'selected' : ''}>Feminino</option>
+                            </select>
+                        </div>
+                        <input type="text" name="student_img_url_${studentIdx}" placeholder="Link da imagem (Ex: Drive)" value="${aluno && aluno.foto && !aluno.foto.startsWith('images/perfis/') ? aluno.foto : ''}" oninput="document.getElementById('img_preview_${studentIdx}').src = processImageUrl(this.value) || document.querySelector('select[name=student_img_select_${studentIdx}]').value;" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 5px 10px; font-family: 'Audiowide'; outline: none; width: 100%; box-sizing: border-box; font-size: 10px;" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -648,7 +670,14 @@ window.loadClassForEdit = async function (slug) {
                 });
 
                 const imgSelect = block.querySelector(`select[name^="student_img_select_"]`);
-                let fotoBase64 = imgSelect ? imgSelect.value : (block.dataset.oldFoto || 'images/perfis/perfil.svg');
+                const imgUrl = block.querySelector(`input[name^="student_img_url_"]`);
+                
+                let fotoFinal = block.dataset.oldFoto || 'images/perfis/perfil.svg';
+                if (imgUrl && imgUrl.value.trim() !== "") {
+                    fotoFinal = processImageUrl(imgUrl.value.trim());
+                } else if (imgSelect && imgSelect.value) {
+                    fotoFinal = imgSelect.value;
+                }
                 
                 let savedBadges = ["","","",""];
                 try {
@@ -662,7 +691,7 @@ window.loadClassForEdit = async function (slug) {
                     nome: nameInput,
                     usuario: userInput,
                     senha: passInput,
-                    foto: fotoBase64,
+                    foto: fotoFinal,
                     badges: savedBadges,
                     notas: arrayNotas,
                     presencas: arrayPresencas,
