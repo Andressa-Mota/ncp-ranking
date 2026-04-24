@@ -1,12 +1,23 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from typing import List, Optional
+import traceback
+import re
 
 app = FastAPI(title="Ranking NCP Backend")
 
-# Permitir que o Frontend converse com o Backend localmente
+# Tratamento global de erros para ajudar no debug da Vercel
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"Erro Crítico: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Erro Interno no Servidor", "details": str(exc), "traceback": traceback.format_exc()}
+    )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,17 +29,20 @@ app.add_middleware(
 MONGO_URI = "mongodb+srv://dheeandressa_db_user:andressadhee.14@cluster0.sxlou9m.mongodb.net/?appName=Cluster0"
 DB_NAME = "ranking_ncp"
 
-# Client MongoDB Async
-# maxIdleTimeMS=50000: Fecha conexões ociosas antes que o firewall do MongoDB Atlas as derrube,
-# evitando o erro de timeout ao tentar usar uma conexão silenciosamente fechada.
-client = AsyncIOMotorClient(
-    MONGO_URI,
-    maxIdleTimeMS=50000,
-    serverSelectionTimeoutMS=10000
-)
-db = client[DB_NAME]
+_client = None
 
-# Modelos (Pydantic) de Validação de Dados
+def get_db():
+    global _client
+    if _client is None:
+        # Inicialização Lasy (tardia) para não bugar o event loop da Vercel
+        _client = AsyncIOMotorClient(
+            MONGO_URI,
+            maxIdleTimeMS=50000,
+            serverSelectionTimeoutMS=10000
+        )
+    return _client[DB_NAME]
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -37,10 +51,7 @@ class StudentSchema(BaseModel):
     nome: str
     usuario: str
     senha: str
-    # Em uma aplicação real, a foto seria tratada como FileUpload e armazenada e.g., Amazon S3, 
-    # porém, vamos colocar uma string opcional para base64 ou mock na v1
     foto: str = ""
-    # Rankings default
     xp_total: int = 0
     presencas: List[str] = []
     soma_notas: int = 0
@@ -56,7 +67,9 @@ class ClassSchema(BaseModel):
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    global _client
+    if _client:
+        _client.close()
 
 # ---------- ROTAS ---------- #
 
@@ -66,7 +79,6 @@ def read_root():
 
 @app.post("/api/login")
 async def login(req: LoginRequest):
-    # Tratar Administradores fixos (Case Insensitive para o Usuário)
     usr = req.username.lower()
     
     if usr == "andressa" and req.password == "dhee.14":
@@ -75,8 +87,7 @@ async def login(req: LoginRequest):
     if usr == "lucas" and req.password == "lucas.001":
         return {"userType": "admin", "username": "Lucas"}
     
-    # Se não for admin, checar alunos na coleção de forma assíncrona
-    aluno = await db["alunos"].find_one({"usuario": req.username, "senha": req.password})
+    aluno = await get_db()["alunos"].find_one({"usuario": req.username, "senha": req.password})
     if aluno:
         return {"userType": "aluno", "username": aluno["nome"], "classId": aluno.get("class_id")}
     
@@ -84,19 +95,14 @@ async def login(req: LoginRequest):
 
 @app.post("/api/turmas")
 async def create_class(req: ClassSchema):
-    import re
-    # Cria uma url limpa para a turma (ex: "SÁB 8H" vira "sabado-8h")
-    # Para ser mais dinâmico, vamos apenas tirar espaços e focar em alfanuméricos
     class_slug = re.sub(r'[^a-zA-Z0-9]+', '-', req.nome_turma.lower()).strip('-')
 
-    # 1. Inserir a turma no banco (evitando duplicatas exatas se quisessemos)
-    await db["turmas"].insert_one({
+    await get_db()["turmas"].insert_one({
         "nome_turma": req.nome_turma, 
         "slug": class_slug,
         "admin": req.admin
     })
     
-    # 2. Inserir todos os alunos vinculados ao slug da turma
     students_to_insert = []
     for aluno in req.alunos:
         student_doc = aluno.dict()
@@ -104,7 +110,7 @@ async def create_class(req: ClassSchema):
         students_to_insert.append(student_doc)
         
     if students_to_insert:
-        await db["alunos"].insert_many(students_to_insert)
+        await get_db()["alunos"].insert_many(students_to_insert)
         
     return {"message": "Turma inserida com sucesso!", "slug": class_slug}
 
@@ -112,10 +118,9 @@ async def create_class(req: ClassSchema):
 async def get_classes(admin: Optional[str] = None):
     query = {}
     if admin:
-        import re
         query["admin"] = {"$regex": f"^{re.escape(admin)}$", "$options": "i"}
         
-    cursor = db["turmas"].find(query, {"_id": 0})
+    cursor = get_db()["turmas"].find(query, {"_id": 0})
     turmas = []
     async for t in cursor:
         turmas.append(t)
@@ -123,11 +128,10 @@ async def get_classes(admin: Optional[str] = None):
 
 @app.get("/api/turmas/{slug}")
 async def get_class_details(slug: str, admin: Optional[str] = None, userType: Optional[str] = None):
-    turma = await db["turmas"].find_one({"slug": slug}, {"_id": 0})
+    turma = await get_db()["turmas"].find_one({"slug": slug}, {"_id": 0})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada")
         
-    # Se a turma tiver um admin associado e for um admin diferente tentando acessar, bloqueia.
     if userType == "admin" and admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado. Você não possui permissão para visualizar as métricas desta turma.")
     
@@ -136,7 +140,7 @@ async def get_class_details(slug: str, admin: Optional[str] = None, userType: Op
         projection["usuario"] = 0
         projection["senha"] = 0
 
-    cursor = db["alunos"].find({"class_id": slug}, projection).sort("xp_total", -1)
+    cursor = get_db()["alunos"].find({"class_id": slug}, projection).sort("xp_total", -1)
     alunos = []
     async for a in cursor:
         alunos.append(a)
@@ -146,15 +150,15 @@ async def get_class_details(slug: str, admin: Optional[str] = None, userType: Op
 
 @app.delete("/api/turmas/{slug}")
 async def delete_class_details(slug: str, admin: Optional[str] = None):
-    turma = await db["turmas"].find_one({"slug": slug})
+    turma = await get_db()["turmas"].find_one({"slug": slug})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada para exclusão")
         
     if admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado. Você não pode excluir uma turma que não criou.")
         
-    await db["turmas"].delete_one({"slug": slug})
-    await db["alunos"].delete_many({"class_id": slug})
+    await get_db()["turmas"].delete_one({"slug": slug})
+    await get_db()["alunos"].delete_many({"class_id": slug})
     return {"message": "Turma e alunos excluídos com sucesso"}
 
 class StudentUpdate(BaseModel):
@@ -175,25 +179,22 @@ class ClassUpdateSchema(BaseModel):
 
 @app.put("/api/turmas/{slug}")
 async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] = None):
-    turma = await db["turmas"].find_one({"slug": slug})
+    turma = await get_db()["turmas"].find_one({"slug": slug})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada")
         
     if admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado. Você não pode atualizar uma turma que não criou.")
 
-    # Atualiza o nome da turma caso alterado
-    await db["turmas"].update_one({"slug": slug}, {"$set": {"nome_turma": req.nome_turma}})
+    await get_db()["turmas"].update_one({"slug": slug}, {"$set": {"nome_turma": req.nome_turma}})
     
-    # Remove todos alunos antigos daquela turma para re-espelhar exato o que veio da tela de edicao
-    await db["alunos"].delete_many({"class_id": slug})
+    await get_db()["alunos"].delete_many({"class_id": slug})
     
     students_to_insert = []
     for aluno in req.alunos:
         doc = aluno.dict()
         doc["class_id"] = slug
         
-        # Algoritmo de XP global iterativo
         xp = 0
         notas_list = doc.get("notas", [])
         tentativas_list = doc.get("testes_tentativas", [])
@@ -205,7 +206,7 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
         presencas_list = doc.get("presencas", [])
         if not isinstance(presencas_list, list):
             presencas_list = []
-        presencas_list = presencas_list[:5] # Máximo 5 presenças
+        presencas_list = presencas_list[:5]
         doc["presencas"] = presencas_list
         xp += (len(presencas_list) * 50)
         
@@ -217,10 +218,8 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
                 
         for t in doc.get("testes_tentativas", []):
             if t > 0:
-                # 1 tent = 100 xp, adicionais perdem 10
                 xp += max(0, 100 - ((t - 1) * 50))
                 
-        # Adicionar XP Bônus Manual, limitando a 10 no backend por segurança
         xp_extra = doc.get("xp_extra", 0)
         xp_extra = min(10, max(0, xp_extra))
         xp += xp_extra
@@ -232,7 +231,7 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
         students_to_insert.append(doc)
         
     if students_to_insert:
-        await db["alunos"].insert_many(students_to_insert)
+        await get_db()["alunos"].insert_many(students_to_insert)
         
     return {"message": "Turma e estatísticas iterativas atualizadas com sucesso!"}
 
@@ -241,13 +240,13 @@ class BadgeUpdateSchema(BaseModel):
 
 @app.put("/api/turmas/{slug}/aluno/{nome}/badges")
 async def update_student_badges(slug: str, nome: str, req: BadgeUpdateSchema, admin: Optional[str] = None):
-    turma = await db["turmas"].find_one({"slug": slug})
+    turma = await get_db()["turmas"].find_one({"slug": slug})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada")
     if admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado ao editar badges")
         
-    res = await db["alunos"].update_one(
+    res = await get_db()["alunos"].update_one(
         {"class_id": slug, "nome": nome},
         {"$set": {"badges": req.badges}}
     )
@@ -259,15 +258,14 @@ async def update_student_badges(slug: str, nome: str, req: BadgeUpdateSchema, ad
 
 @app.put("/api/turmas/{slug}/reset")
 async def reset_class_data(slug: str, admin: Optional[str] = None):
-    turma = await db["turmas"].find_one({"slug": slug})
+    turma = await get_db()["turmas"].find_one({"slug": slug})
     if not turma:
         raise HTTPException(status_code=404, detail="Turma não encontrada")
         
     if admin and turma.get("admin") and turma.get("admin").lower() != admin.lower():
         raise HTTPException(status_code=403, detail="Acesso negado ao zerar dados da turma")
 
-    # Zera as informações relacionadas a desempenho/xp, mantendo o cadastro do aluno.
-    res = await db["alunos"].update_many(
+    res = await get_db()["alunos"].update_many(
         {"class_id": slug},
         {"$set": {
             "notas": [],
@@ -280,4 +278,3 @@ async def reset_class_data(slug: str, admin: Optional[str] = None):
     )
     
     return {"message": "Dados dos alunos zerados com sucesso"}
-
