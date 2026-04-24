@@ -1,4 +1,7 @@
-const API_URL = "http://127.0.0.1:8000/api";
+// Configuração inteligente: detecta se está rodando no computador (local) ou na Vercel (nuvem)
+const API_URL = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost" || window.location.protocol === "file:"
+    ? "http://127.0.0.1:8000/api"
+    : "/api";
 
 // Navigation function
 function goToPage(pageUrl) {
