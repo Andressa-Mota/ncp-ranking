@@ -447,17 +447,24 @@ window.addNota = function (btnElem) {
         <input type="number" name="student_notas_${timeId}" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 2px 10px; font-family: 'Audiowide'; font-size: 10px; width: 50px; outline: none;">
         <span style="font-size: 8px;">Tent:</span>
         <input type="number" name="student_tentativas_${timeId}" placeholder="Qtd" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 2px 10px; font-family: 'Audiowide'; font-size: 10px; width: 50px; outline: none;">
+        <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
     `;
     container.appendChild(wrapper);
 };
 
 window.addComp = function (btnElem) {
     const container = btnElem.parentElement.nextElementSibling;
-    const select = document.createElement('select');
-    select.name = `student_comp_${new Date().getTime()}`;
-    select.style.cssText = "background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;";
-    select.innerHTML = '<option value="bom" style="color: black;">Bom</option><option value="mal" style="color: black;">Mal</option>';
-    container.appendChild(select);
+    const timeId = new Date().getTime();
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = "display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;";
+    wrapper.innerHTML = `
+        <select name="student_comp_${timeId}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;">
+            <option value="bom" style="color: black;">Bom</option>
+            <option value="mal" style="color: black;">Mal</option>
+        </select>
+        <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
+    `;
+    container.appendChild(wrapper);
 };
 
 window.addPresenca = function (btnElem) {
@@ -472,6 +479,7 @@ window.addPresenca = function (btnElem) {
     wrapper.innerHTML = `
         <span style="font-size: 8px;">Dia:</span>
         <input type="date" name="student_presencas_${timeId}" style="background-color: transparent; border: 1px solid white; border-radius: 20px; color: white; padding: 2px 10px; font-family: 'Audiowide'; font-size: 10px; width: 110px; outline: none;">
+        <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
     `;
     container.appendChild(wrapper);
 };
@@ -494,27 +502,17 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
 
     const maxNotas = Math.max(arrNotas.length, arrTestes.length);
     let htmlNotas = "";
-    if (maxNotas > 0) {
-        for (let i = 0; i < maxNotas; i++) {
-            const notaVal = arrNotas[i] !== undefined ? arrNotas[i] : "";
-            const tentativaVal = arrTestes[i] !== undefined ? arrTestes[i] : "";
-            const id = new Date().getTime() + Math.random();
-            htmlNotas += `
-                <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;">
-                    <span style="font-size: 8px;">N:</span>
-                    <input type="number" name="student_notas_${id}" value="${notaVal}" style="${formatInput}">
-                    <span style="font-size: 8px;">Tent:</span>
-                    <input type="number" name="student_tentativas_${id}" value="${tentativaVal}" placeholder="Qtd" style="${formatInput}">
-                </div>
-            `;
-        }
-    } else {
-        htmlNotas = `
+    for (let i = 0; i < maxNotas; i++) {
+        const notaVal = arrNotas[i] !== undefined ? arrNotas[i] : "";
+        const tentativaVal = arrTestes[i] !== undefined ? arrTestes[i] : "";
+        const id = new Date().getTime() + Math.random();
+        htmlNotas += `
             <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;">
                 <span style="font-size: 8px;">N:</span>
-                <input type="number" name="student_notas_${studentIdx}" style="${formatInput}">
+                <input type="number" name="student_notas_${id}" value="${notaVal}" style="${formatInput}">
                 <span style="font-size: 8px;">Tent:</span>
-                <input type="number" name="student_tentativas_${studentIdx}" placeholder="Qtd" style="${formatInput}">
+                <input type="number" name="student_tentativas_${id}" value="${tentativaVal}" placeholder="Qtd" style="${formatInput}">
+                <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
             </div>
         `;
     }
@@ -526,19 +524,23 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
             <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;">
                 <span style="font-size: 8px;">Dia:</span>
                 <input type="date" name="student_presencas_${id}" value="${dataVal}" style="${formatInput} width: 110px;">
+                <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
             </div>
         `;
     });
 
     let htmlComps = arrComps.map(val => {
         const id = new Date().getTime() + Math.random();
-        return `<select name="student_comp_${id}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;">
+        return `
+            <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;">
+                <select name="student_comp_${id}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;">
                     <option value="bom" style="color: black;" ${val === 'bom' ? 'selected' : ''}>Bom</option>
                     <option value="mal" style="color: black;" ${val === 'mal' ? 'selected' : ''}>Mal</option>
-                </select>`;
+                </select>
+                <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
+            </div>
+        `;
     }).join('');
-
-    if (!htmlComps) htmlComps = `<select name="student_comp_${studentIdx}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;"><option value="bom" style="color: black;">Bom</option><option value="mal" style="color: black;">Mal</option></select>`;
 
     return `
         <button type="button" class="remove-btn" onclick="if(confirm('Tem certeza que deseja excluir este aluno?')) this.parentElement.remove()">X</button>
