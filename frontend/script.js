@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Processa URL de imagem (converte link do Drive para link direto)
-    window.processImageUrl = function(url) {
+    window.processImageUrl = function (url) {
         if (!url) return url;
         const driveRegex = /drive\.google\.com\/file\/d\/([^/]+)/;
         const match = url.match(driveRegex);
@@ -257,7 +257,7 @@ let currentBadgeIndex = -1;
 let currentHtmlId = -1;
 let currentClassSlug = "";
 
-window.openBadgeSelector = function(nome, slotIndex, htmlId) {
+window.openBadgeSelector = function (nome, slotIndex, htmlId) {
     currentBadgeStudentName = nome;
     currentBadgeIndex = slotIndex;
     currentHtmlId = htmlId;
@@ -286,22 +286,22 @@ window.openBadgeSelector = function(nome, slotIndex, htmlId) {
     overlay.style.display = 'flex';
 };
 
-window.applySelectedBadge = async function(imageName) {
+window.applySelectedBadge = async function (imageName) {
     document.getElementById('global-badge-overlay').style.display = 'none';
-    if(currentBadgeStudentName === "" || currentBadgeIndex === -1) return;
-    
+    if (currentBadgeStudentName === "" || currentBadgeIndex === -1) return;
+
     const adminUsername = localStorage.getItem('username') || '';
     try {
         const slotContainer = document.getElementById(`badge-container-${currentHtmlId}`);
         let currentBadges = JSON.parse(slotContainer.getAttribute('data-badges') || '["","","",""]');
         currentBadges[currentBadgeIndex] = imageName;
-        
+
         const response = await fetch(`${API_URL}/turmas/${currentClassSlug}/aluno/${encodeURIComponent(currentBadgeStudentName)}/badges?admin=${adminUsername}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ badges: currentBadges })
         });
-        
+
         if (response.ok) {
             slotContainer.setAttribute('data-badges', JSON.stringify(currentBadges));
             const slot = slotContainer.children[currentBadgeIndex];
@@ -313,7 +313,7 @@ window.applySelectedBadge = async function(imageName) {
                 slot.innerText = '+';
             }
         } else alert("Erro ao atualizar a imagem");
-    } catch(e) {
+    } catch (e) {
         alert("Erro de conexão com o banco");
     }
 };
@@ -345,22 +345,22 @@ window.loadClassRanking = async function (slug) {
             const fotoUrl = aluno.foto || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg';
 
             const isAdmin = userType === 'admin';
-            
+
             const badgesArr = Array.isArray(aluno.badges) ? aluno.badges : ["", "", "", ""];
             let badgesHtml = "";
-            for(let i=0; i<4; i++){
+            for (let i = 0; i < 4; i++) {
                 let b = badgesArr[i];
-                if(b) {
-                   if (b === 'comportamento.png') b = 'comportamento-login.svg';
-                   if (b === 'eficiencia.png') b = 'eficiencia-login.svg';
-                   if (b === 'notas.png') b = 'notas-login.svg';
-                   if (b === 'presenca.png') b = 'presença-login.svg';
-                   
-                   badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/badges/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
-                } else if(isAdmin) {
-                   badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})">+</div>`;
+                if (b) {
+                    if (b === 'comportamento.png') b = 'comportamento-login.svg';
+                    if (b === 'eficiencia.png') b = 'eficiencia-login.svg';
+                    if (b === 'notas.png') b = 'notas-login.svg';
+                    if (b === 'presenca.png') b = 'presença-login.svg';
+
+                    badgesHtml += `<div class="badge-slot ${!isAdmin ? 'read-only' : ''}" style="background-image: url('images/badges/${b}')" ${isAdmin ? `onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})"` : ''}></div>`;
+                } else if (isAdmin) {
+                    badgesHtml += `<div class="badge-slot" onclick="openBadgeSelector('${aluno.nome}', ${i}, ${index})">+</div>`;
                 } else {
-                   badgesHtml += `<div class="badge-slot read-only"></div>`;
+                    badgesHtml += `<div class="badge-slot read-only"></div>`;
                 }
             }
 
@@ -394,7 +394,7 @@ window.loadClassRanking = async function (slug) {
                 adminMenuCnt = document.createElement('div');
                 adminMenuCnt.id = 'admin-menu-container';
                 adminMenuCnt.className = 'admin-menu-container';
-                
+
                 const hamburger = document.createElement('div');
                 hamburger.className = 'hamburger-icon';
                 hamburger.innerHTML = '☰';
@@ -406,23 +406,23 @@ window.loadClassRanking = async function (slug) {
                 const dropdown = document.createElement('div');
                 dropdown.id = 'admin-dropdown';
                 dropdown.className = 'admin-dropdown';
-                
+
                 let relatorioBtn = document.createElement('button');
                 relatorioBtn.className = 'edit-btn-white-blue btn-relatorio';
                 relatorioBtn.textContent = 'RELATÓRIO';
                 relatorioBtn.onclick = () => goToPage('relatorio.html?id=' + slug);
-                
+
                 let editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn-white-blue btn-editar';
                 editBtn.textContent = 'EDITAR TURMA';
                 editBtn.onclick = () => goToPage('editar-turma.html?id=' + slug);
-                
+
                 dropdown.appendChild(relatorioBtn);
                 dropdown.appendChild(editBtn);
-                
+
                 adminMenuCnt.appendChild(hamburger);
                 adminMenuCnt.appendChild(dropdown);
-                
+
                 headerRight.appendChild(adminMenuCnt);
             }
         }
@@ -597,7 +597,7 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
                 
                 <div class="student-row" style="align-items: start; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px;">
                     <label style="width: 100%">COMPORTAMENTO: 
-                        <button type="button" onclick="addComp(this)" style="background:transparent; color: #f8b500; font-weight:bold; border:none; cursor:pointer;">[+ Dia]</button>
+                        <button type="button" onclick="addComp(this)" style="background:transparent; color: #f8b500; font-weight:bold; border:none; cursor:pointer;">[+ Add]</button>
                     </label>
                     <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;">${htmlComps}</div>
                 </div>
@@ -636,7 +636,7 @@ window.loadClassForEdit = async function (slug) {
             block.className = 'student-block';
             block.style.background = 'rgba(0,0,0,0.3)';
             block.dataset.oldFoto = aluno.foto || '';
-            block.dataset.badges = JSON.stringify(aluno.badges || ["","","",""]);
+            block.dataset.badges = JSON.stringify(aluno.badges || ["", "", "", ""]);
             block.innerHTML = buildExpandedStudentHTML(studentIdx, aluno);
             container.appendChild(block);
         });
@@ -652,7 +652,7 @@ window.loadClassForEdit = async function (slug) {
                 const nameInput = block.querySelector(`input[name^="student_name_"]`).value;
                 const userInput = block.querySelector(`input[name^="student_user_"]`).value;
                 const passInput = block.querySelector(`input[name^="student_pass_"]`).value;
-                
+
                 const arrayPresencas = [];
                 block.querySelectorAll(`input[name^="student_presencas_"]`).forEach(el => {
                     if (el.value !== "") arrayPresencas.push(el.value);
@@ -676,18 +676,18 @@ window.loadClassForEdit = async function (slug) {
 
                 const imgSelect = block.querySelector(`select[name^="student_img_select_"]`);
                 const imgUrl = block.querySelector(`input[name^="student_img_url_"]`);
-                
+
                 let fotoFinal = block.dataset.oldFoto || 'images/perfis/perfil.svg';
                 if (imgUrl && imgUrl.value.trim() !== "") {
                     fotoFinal = processImageUrl(imgUrl.value.trim());
                 } else if (imgSelect && imgSelect.value) {
                     fotoFinal = imgSelect.value;
                 }
-                
-                let savedBadges = ["","","",""];
+
+                let savedBadges = ["", "", "", ""];
                 try {
                     if (block.dataset.badges) savedBadges = JSON.parse(block.dataset.badges);
-                } catch(e) {}
+                } catch (e) { }
 
                 const xpExtraInput = block.querySelector(`input[name^="student_xpextra_"]`);
                 const xpExtra = xpExtraInput && xpExtraInput.value ? parseInt(xpExtraInput.value) : 0;
@@ -724,11 +724,11 @@ window.loadClassForEdit = async function (slug) {
     }
 };
 
-window.resetClassData = async function() {
+window.resetClassData = async function () {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('id');
     if (!slug) return;
-    
+
     const confirmReset = confirm("AVISO: Você realmente quer apagar todos os dados permanentemente?\nISSO APAGARÁ XP, NOTAS, PRESENÇAS, COMPORTAMENTOS, BADGES, TENTATIVAS E RANKINGS DE TODOS OS ALUNOS DESTA TURMA!\n\nOs dados pessoais dos alunos (nome, foto, login) serão mantidos intactos.\n\nEsta ação NÃO pode ser desfeita. Continuar?");
     if (!confirmReset) return;
 
@@ -758,7 +758,7 @@ window.loadReport = async function (slug) {
         const data = await response.json();
 
         document.getElementById('turma-title').innerText = data.nome_turma.toUpperCase();
-        
+
         const alunos = data.alunos || [];
         if (alunos.length === 0) {
             document.getElementById('students-report-list').innerHTML = "<p style='color:white;text-align:center;'>Nenhum aluno nesta turma.</p>";
@@ -796,8 +796,8 @@ window.loadReport = async function (slug) {
 
             let compScore = 0;
             arrComps.forEach(c => {
-                if(c==='bom') compScore+=10; 
-                else if(c==='mal') compScore-=10;
+                if (c === 'bom') compScore += 10;
+                else if (c === 'mal') compScore -= 10;
             });
 
             return {
@@ -812,7 +812,7 @@ window.loadReport = async function (slug) {
         const buildPodiumCol = (player, rank) => {
             const rLabel = rank === '1st' ? '1º' : rank === '2nd' ? '2º' : '3º';
             let fixedHeight = rank === '1st' ? 100 : rank === '2nd' ? 85 : 70;
-            
+
             if (!player) return `
             <div class="podium-col" style="height: ${fixedHeight}%;">
                 <div class="podium-text-container">
@@ -821,7 +821,7 @@ window.loadReport = async function (slug) {
                 </div>
                 <div class="podium-rank">${rLabel}</div>
             </div>`;
-            
+
             return `
             <div class="podium-col" style="height: ${fixedHeight}%;">
                 <div class="podium-text-container" title="${player.nome}">
@@ -840,10 +840,10 @@ window.loadReport = async function (slug) {
             return buildPodiumCol(first, '1st') + buildPodiumCol(second, '2nd') + buildPodiumCol(third, '3rd');
         };
 
-        const topNotasArr = [...metrics].sort((a,b) => b.notasVal - a.notasVal);
-        const topPresArr = [...metrics].sort((a,b) => b.presVal - a.presVal);
-        const topTestesArr = [...metrics].filter(x => x.notasVal > 0).sort((a,b) => a.testesVal - b.testesVal);
-        const topCompArr = [...metrics].sort((a,b) => b.compVal - a.compVal);
+        const topNotasArr = [...metrics].sort((a, b) => b.notasVal - a.notasVal);
+        const topPresArr = [...metrics].sort((a, b) => b.presVal - a.presVal);
+        const topTestesArr = [...metrics].filter(x => x.notasVal > 0).sort((a, b) => a.testesVal - b.testesVal);
+        const topCompArr = [...metrics].sort((a, b) => b.compVal - a.compVal);
 
         const rankingHtml = `
             <div class="stat-card red-theme">
@@ -885,30 +885,30 @@ window.loadReport = async function (slug) {
             let sumTestesTotal = 0;
 
             const maxLen = Math.max(arrNotas.length, arrTestes.length);
-            for(let i=0; i<maxLen; i++){
+            for (let i = 0; i < maxLen; i++) {
                 const n = arrNotas[i] || 0;
                 const t = arrTestes[i] || 0;
                 sumTestesTotal += t;
-                if(t > 3 || n < 70){
+                if (t > 3 || n < 70) {
                     let reason = t > 3 ? "exceder 3 testes" : "ser menor que 70";
-                    if(t > 3 && n < 70) reason = "testes ocultos e < 70";
-                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i+1}: <span style="text-decoration:line-through;color:#aaa;">${n}</span> (T: ${t}) <span style="color:#ff4d4d;font-size:11px;">- Desconsiderada por ${reason}!</span></div>`;
+                    if (t > 3 && n < 70) reason = "testes ocultos e < 70";
+                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="text-decoration:line-through;color:#aaa;">${n}</span> (T: ${t}) <span style="color:#ff4d4d;font-size:11px;">- Desconsiderada por ${reason}!</span></div>`;
                 } else {
                     validNotasSum += n;
-                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i+1}: <span style="color:#4da6ff;font-weight:bold;">${n}</span> (T: ${t}) - Válida</div>`;
+                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="color:#4da6ff;font-weight:bold;">${n}</span> (T: ${t}) - Válida</div>`;
                 }
             }
-            if(notasDetailsHtml === "") notasDetailsHtml = "Nenhuma nota registrada.";
+            if (notasDetailsHtml === "") notasDetailsHtml = "Nenhuma nota registrada.";
 
             let colorTestes = (sumTestesTotal <= avgTests) ? '#00ff00' : '#ff4d4d';
 
             let compScore = 0;
             let compDetailsHtml = "";
             arrComps.forEach((c, idx) => {
-                if(c==='bom') { compScore+=10; compDetailsHtml+=`Dia ${idx+1}: BOM (+10)<br>`; }
-                else if(c==='mal') { compScore-=10; compDetailsHtml+=`Dia ${idx+1}: MAL (-10)<br>`; }
+                if (c === 'bom') { compScore += 10; compDetailsHtml += `Dia ${idx + 1}: BOM (+10)<br>`; }
+                else if (c === 'mal') { compScore -= 10; compDetailsHtml += `Dia ${idx + 1}: MAL (-10)<br>`; }
             });
-            if(compDetailsHtml === "") compDetailsHtml = "Nenhum comportamento classificado.";
+            if (compDetailsHtml === "") compDetailsHtml = "Nenhum comportamento classificado.";
 
             let pL = arrPresencas.length;
             let colorPresencas = (pL >= avgPresencas) ? '#00ff00' : '#ff4d4d';
@@ -942,7 +942,7 @@ window.loadReport = async function (slug) {
                             <div style="font-family:sans-serif;font-size:14px;margin-bottom:10px;">
                                 ${compDetailsHtml}
                             </div>
-                            <div style="font-weight:bold; color:${compScore>=0?'#00ffaa':'#ff4d4d'}; font-family:'Audiowide';">SALDO COMP.: <span style="font-size:20px;">${compScore}</span></div>
+                            <div style="font-weight:bold; color:${compScore >= 0 ? '#00ffaa' : '#ff4d4d'}; font-family:'Audiowide';">SALDO COMP.: <span style="font-size:20px;">${compScore}</span></div>
 
                             <h4 style="color:#00c3ff;margin-top:15px;font-family:'Press Start 2P';font-size:10px;">PRESENÇAS REGISTRADAS</h4>
                             <div style="font-family:sans-serif;font-size:14px;">
