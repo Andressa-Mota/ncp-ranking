@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any, Union
 import traceback
 import re
 import certifi
@@ -170,7 +170,7 @@ class StudentUpdate(BaseModel):
     foto: str = ""
     notas: List[int] = []
     presencas: List[str] = []
-    comportamentos: List[str] = []
+    comportamentos: List[Any] = []
     testes_tentativas: List[int] = []
     badges: List[str] = ["", "", "", ""]
     xp_extra: int = 0
@@ -214,9 +214,16 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
         xp += (len(presencas_list) * 50)
         
         for comp in doc.get("comportamentos", []):
-            if comp == "bom":
+            if isinstance(comp, dict):
+                c_type = comp.get("tipo", "")
+            elif isinstance(comp, str) and "|" in comp:
+                c_type = comp.split("|")[0]
+            else:
+                c_type = comp
+
+            if c_type == "bom":
                 xp += 10
-            elif comp == "mal":
+            elif c_type == "mal":
                 xp -= 10
                 
         xp_extra = doc.get("xp_extra", 0)

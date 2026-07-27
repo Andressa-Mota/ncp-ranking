@@ -452,20 +452,113 @@ window.addNota = function (btnElem) {
     container.appendChild(wrapper);
 };
 
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 window.addComp = function (btnElem) {
     const container = btnElem.parentElement.nextElementSibling;
-    const timeId = new Date().getTime();
+    const timeId = new Date().getTime() + Math.floor(Math.random() * 1000);
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = "display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;";
+    wrapper.className = 'comp-item-wrapper';
+    wrapper.style.cssText = "position: relative; display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);";
     wrapper.innerHTML = `
         <select name="student_comp_${timeId}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;">
             <option value="bom" style="color: black;">Bom</option>
             <option value="mal" style="color: black;">Mal</option>
         </select>
-        <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
+        <button type="button" class="comp-doc-btn" onclick="toggleCompComment(this)" title="Adicionar Comentário">
+            📄
+        </button>
+        <div class="comp-comment-popover" style="display: none;">
+            <div class="comp-comment-header">
+                <span>📝 Comentário (máx 200)</span>
+                <span class="comp-char-counter">0/200</span>
+            </div>
+            <textarea name="student_comp_comment_${timeId}" class="comp-comment-textarea" maxlength="200" placeholder="Escreva um comentário sobre o comportamento..." oninput="updateCompCharCount(this)"></textarea>
+            <div class="comp-comment-actions">
+                <button type="button" class="comp-btn-save" onclick="saveCompComment(this)">Salvar</button>
+                <button type="button" class="comp-btn-delete" onclick="deleteCompComment(this)">Apagar</button>
+                <button type="button" class="comp-btn-close" onclick="closeCompComment(this)">✖</button>
+            </div>
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;" title="Excluir comportamento">[X]</button>
     `;
     container.appendChild(wrapper);
 };
+
+window.toggleCompComment = function(btn) {
+    const wrapper = btn.closest('.comp-item-wrapper');
+    const popover = wrapper.querySelector('.comp-comment-popover');
+    
+    document.querySelectorAll('.comp-comment-popover').forEach(p => {
+        if (p !== popover) p.style.display = 'none';
+    });
+
+    if (popover.style.display === 'none' || !popover.style.display) {
+        popover.style.display = 'flex';
+        const textarea = popover.querySelector('.comp-comment-textarea');
+        textarea.focus();
+        updateCompCharCount(textarea);
+    } else {
+        popover.style.display = 'none';
+    }
+};
+
+window.updateCompCharCount = function(textarea) {
+    const popover = textarea.closest('.comp-comment-popover');
+    const counter = popover.querySelector('.comp-char-counter');
+    counter.innerText = `${textarea.value.length}/200`;
+};
+
+window.saveCompComment = function(btn) {
+    const wrapper = btn.closest('.comp-item-wrapper');
+    const popover = wrapper.querySelector('.comp-comment-popover');
+    const docBtn = wrapper.querySelector('.comp-doc-btn');
+    const textarea = popover.querySelector('.comp-comment-textarea');
+
+    if (textarea.value.trim().length > 0) {
+        docBtn.classList.add('has-comment');
+        docBtn.title = 'Ver/Editar Comentário';
+    } else {
+        docBtn.classList.remove('has-comment');
+        docBtn.title = 'Adicionar Comentário';
+    }
+
+    popover.style.display = 'none';
+};
+
+window.deleteCompComment = function(btn) {
+    const wrapper = btn.closest('.comp-item-wrapper');
+    const popover = wrapper.querySelector('.comp-comment-popover');
+    const docBtn = wrapper.querySelector('.comp-doc-btn');
+    const textarea = popover.querySelector('.comp-comment-textarea');
+
+    textarea.value = '';
+    updateCompCharCount(textarea);
+    docBtn.classList.remove('has-comment');
+    docBtn.title = 'Adicionar Comentário';
+    popover.style.display = 'none';
+};
+
+window.closeCompComment = function(btn) {
+    const popover = btn.closest('.comp-comment-popover');
+    popover.style.display = 'none';
+};
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.comp-item-wrapper')) {
+        document.querySelectorAll('.comp-comment-popover').forEach(p => {
+            p.style.display = 'none';
+        });
+    }
+});
 
 window.addPresenca = function (btnElem) {
     const container = btnElem.parentElement.nextElementSibling;
@@ -529,15 +622,49 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
         `;
     });
 
-    let htmlComps = arrComps.map(val => {
-        const id = new Date().getTime() + Math.random();
+    let htmlComps = arrComps.map(comp => {
+        let val = 'bom';
+        let commentVal = '';
+
+        if (typeof comp === 'object' && comp !== null) {
+            val = comp.tipo || 'bom';
+            commentVal = comp.comentario || '';
+        } else if (typeof comp === 'string') {
+            if (comp.includes('|')) {
+                const parts = comp.split('|');
+                val = parts[0];
+                commentVal = parts.slice(1).join('|');
+            } else {
+                val = comp;
+            }
+        }
+
+        const id = new Date().getTime() + Math.floor(Math.random() * 1000000);
+        const hasComment = commentVal.trim().length > 0;
+        const charLen = commentVal.length;
+
         return `
-            <div style="display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 10px;">
+            <div class="comp-item-wrapper" style="position: relative; display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);">
                 <select name="student_comp_${id}" style="background: transparent; color: white; border: 1px solid white; border-radius: 20px; padding: 2px; font-family: 'Audiowide'; outline: none;">
                     <option value="bom" style="color: black;" ${val === 'bom' ? 'selected' : ''}>Bom</option>
                     <option value="mal" style="color: black;" ${val === 'mal' ? 'selected' : ''}>Mal</option>
                 </select>
-                <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;">[X]</button>
+                <button type="button" class="comp-doc-btn ${hasComment ? 'has-comment' : ''}" onclick="toggleCompComment(this)" title="${hasComment ? 'Ver/Editar Comentário' : 'Adicionar Comentário'}">
+                    📄
+                </button>
+                <div class="comp-comment-popover" style="display: none;">
+                    <div class="comp-comment-header">
+                        <span>📝 Comentário (máx 200)</span>
+                        <span class="comp-char-counter">${charLen}/200</span>
+                    </div>
+                    <textarea name="student_comp_comment_${id}" class="comp-comment-textarea" maxlength="200" placeholder="Escreva um comentário sobre o comportamento..." oninput="updateCompCharCount(this)">${escapeHtml(commentVal)}</textarea>
+                    <div class="comp-comment-actions">
+                        <button type="button" class="comp-btn-save" onclick="saveCompComment(this)">Salvar</button>
+                        <button type="button" class="comp-btn-delete" onclick="deleteCompComment(this)">Apagar</button>
+                        <button type="button" class="comp-btn-close" onclick="closeCompComment(this)">✖</button>
+                    </div>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" style="background:transparent; color: red; font-weight:bold; border:none; cursor:pointer;" title="Excluir comportamento">[X]</button>
             </div>
         `;
     }).join('');
@@ -665,8 +792,15 @@ window.loadClassForEdit = async function (slug) {
                 });
                 // Scan Multi Arrays Comp
                 const arrayComps = [];
-                block.querySelectorAll(`select[name^="student_comp_"]`).forEach(el => {
-                    arrayComps.push(el.value);
+                block.querySelectorAll('.comp-item-wrapper').forEach(wrapper => {
+                    const select = wrapper.querySelector('select[name^="student_comp_"]');
+                    const textarea = wrapper.querySelector('.comp-comment-textarea');
+                    if (select) {
+                        arrayComps.push({
+                            tipo: select.value,
+                            comentario: textarea ? textarea.value.trim() : ''
+                        });
+                    }
                 });
                 // Scan Multi Arrays Testes
                 const arrayTestes = [];
@@ -798,8 +932,9 @@ window.loadReport = async function (slug) {
 
             let compScore = 0;
             arrComps.forEach(c => {
-                if (c === 'bom') compScore += 10;
-                else if (c === 'mal') compScore -= 10;
+                const tipo = (typeof c === 'object' && c !== null) ? c.tipo : (typeof c === 'string' && c.includes('|') ? c.split('|')[0] : c);
+                if (tipo === 'bom') compScore += 10;
+                else if (tipo === 'mal') compScore -= 10;
             });
 
             return {
@@ -911,8 +1046,33 @@ window.loadReport = async function (slug) {
             let compScore = 0;
             let compDetailsHtml = "";
             arrComps.forEach((c, idx) => {
-                if (c === 'bom') { compScore += 10; compDetailsHtml += `Dia ${idx + 1}: BOM (+10)<br>`; }
-                else if (c === 'mal') { compScore -= 10; compDetailsHtml += `Dia ${idx + 1}: MAL (-10)<br>`; }
+                const tipo = (typeof c === 'object' && c !== null) ? c.tipo : (typeof c === 'string' && c.includes('|') ? c.split('|')[0] : c);
+                const comentario = (typeof c === 'object' && c !== null) ? (c.comentario || '') : (typeof c === 'string' && c.includes('|') ? c.split('|')[1] : '');
+
+                let badge = "";
+                if (tipo === 'bom') {
+                    compScore += 10;
+                    badge = `<span style="color:#00ffaa; font-weight:bold;">BOM (+10)</span>`;
+                } else if (tipo === 'mal') {
+                    compScore -= 10;
+                    badge = `<span style="color:#ff4d4d; font-weight:bold;">MAL (-10)</span>`;
+                }
+
+                let commentHtml = "";
+                if (comentario && comentario.trim() !== "") {
+                    commentHtml = `
+                        <div style="background: rgba(0, 195, 255, 0.1); border-left: 3px solid #00c3ff; padding: 4px 8px; margin-top: 4px; border-radius: 0 6px 6px 0; font-size: 12px; color: #e2e8f0; font-family: sans-serif;">
+                            📄 <em>"${escapeHtml(comentario)}"</em>
+                        </div>
+                    `;
+                }
+
+                compDetailsHtml += `
+                    <div style="margin-bottom: 8px;">
+                        <div>Dia ${idx + 1}: ${badge}</div>
+                        ${commentHtml}
+                    </div>
+                `;
             });
             if (compDetailsHtml === "") compDetailsHtml = "Nenhum comportamento classificado.";
 
