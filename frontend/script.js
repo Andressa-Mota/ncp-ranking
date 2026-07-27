@@ -340,7 +340,7 @@ window.loadClassRanking = async function (slug) {
 
             const trophyHtml = index === 0 ? `<div class="trophy" style="position: absolute; top:-15px; left:-15px; font-size:35px; z-index:10; filter: drop-shadow(0 0 5px gold);">🏆</div>` : '';
 
-            const maxXP = 2050;
+            const maxXP = 1900;
             const percentage = Math.min(100, Math.max(0, (aluno.xp_total / maxXP) * 100));
             const fotoUrl = aluno.foto || 'https://i.pinimg.com/736x/8b/16/7a/8b167af653c2399dd93b952a48740620.jpg';
 
@@ -578,8 +578,8 @@ function buildExpandedStudentHTML(studentIdx, aluno = null) {
             <!-- Info XP Estatísticas Array -->
             <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 10px; border-left: 2px dashed #00c3ff; padding-left: 15px;">
                 <div class="student-row" title="Esse pode ser um xp extra dado pelo professor, se assim ele decidir, como por exemplo, ganhar nos jogos da semana interativa" style="align-items: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; margin-bottom: 5px;">
-                    <label style="width: auto; font-family: 'Press Start 2P', cursive; font-size: 8px; color: gold; cursor: help;">BÔNUS XP (Max 10):</label>
-                    <input type="number" name="student_xpextra_${studentIdx}" value="${aluno && aluno.xp_extra ? aluno.xp_extra : 0}" min="0" max="10" placeholder="0" style="background-color: transparent; border: 1px solid gold; border-radius: 20px; color: gold; padding: 2px 10px; font-family: 'Audiowide'; font-size: 11px; width: 60px; outline: none; margin-left:10px;">
+                    <label style="width: auto; font-family: 'Press Start 2P', cursive; font-size: 8px; color: gold; cursor: help;">BÔNUS XP (Max 50):</label>
+                    <input type="number" name="student_xpextra_${studentIdx}" value="${aluno && aluno.xp_extra ? aluno.xp_extra : 0}" min="0" max="50" placeholder="0" style="background-color: transparent; border: 1px solid gold; border-radius: 20px; color: gold; padding: 2px 10px; font-family: 'Audiowide'; font-size: 11px; width: 60px; outline: none; margin-left:10px;">
                 </div>
                 <div class="student-row" style="align-items: start; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px;">
                     <label style="width: 100%">PRESENÇAS (Máx 5): 
@@ -789,7 +789,9 @@ window.loadReport = async function (slug) {
             arrNotas.forEach((n, i) => {
                 const t = arrTestes[i] || 0;
                 sumTestesTotal += t;
-                if (t <= 3 && n >= 70) validNotasSum += n;
+                if (t > 0 && t <= 3 && n >= 70) {
+                    validNotasSum += n + Math.max(0, 100 - ((t - 1) * 50));
+                }
             });
 
             let pL = arrPresencas.length;
@@ -889,13 +891,17 @@ window.loadReport = async function (slug) {
                 const n = arrNotas[i] || 0;
                 const t = arrTestes[i] || 0;
                 sumTestesTotal += t;
-                if (t > 3 || n < 70) {
+                if (t === 0) {
+                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="text-decoration:line-through;color:#aaa;">${n}</span> (T: ${t}) <span style="color:#ff4d4d;font-size:11px;">- Desconsiderada (0 tentativas registradas)!</span></div>`;
+                } else if (t > 3 || n < 70) {
                     let reason = t > 3 ? "exceder 3 testes" : "ser menor que 70";
-                    if (t > 3 && n < 70) reason = "testes ocultos e < 70";
+                    if (t > 3 && n < 70) reason = "testes excedidos e < 70";
                     notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="text-decoration:line-through;color:#aaa;">${n}</span> (T: ${t}) <span style="color:#ff4d4d;font-size:11px;">- Desconsiderada por ${reason}!</span></div>`;
                 } else {
-                    validNotasSum += n;
-                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="color:#4da6ff;font-weight:bold;">${n}</span> (T: ${t}) - Válida</div>`;
+                    let xpGanho = n + Math.max(0, 100 - ((t - 1) * 50));
+                    validNotasSum += xpGanho;
+                    let bonusStr = Math.max(0, 100 - ((t - 1) * 50)) > 0 ? ` (+${Math.max(0, 100 - ((t - 1) * 50))} bônus)` : "";
+                    notasDetailsHtml += `<div style="margin-bottom:5px;">Nota ${i + 1}: <span style="color:#4da6ff;font-weight:bold;">${n}</span> (T: ${t}) - Válida <span style="color:#00ffaa;font-size:11px;">(${xpGanho} XP${bonusStr})</span></div>`;
                 }
             }
             if (notasDetailsHtml === "") notasDetailsHtml = "Nenhuma nota registrada.";

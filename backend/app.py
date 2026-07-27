@@ -202,8 +202,9 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
         tentativas_list = doc.get("testes_tentativas", [])
         for i, n in enumerate(notas_list):
             t = tentativas_list[i] if i < len(tentativas_list) else 0
-            if t <= 3 and n >= 70:
+            if t > 0 and t <= 3 and n >= 70:
                 xp += n
+                xp += max(0, 100 - ((t - 1) * 50))
         
         presencas_list = doc.get("presencas", [])
         if not isinstance(presencas_list, list):
@@ -218,12 +219,8 @@ async def update_class(slug: str, req: ClassUpdateSchema, admin: Optional[str] =
             elif comp == "mal":
                 xp -= 10
                 
-        for t in doc.get("testes_tentativas", []):
-            if t > 0:
-                xp += max(0, 100 - ((t - 1) * 50))
-                
         xp_extra = doc.get("xp_extra", 0)
-        xp_extra = min(10, max(0, xp_extra))
+        xp_extra = min(50, max(0, xp_extra))
         xp += xp_extra
         doc["xp_extra"] = xp_extra
             
