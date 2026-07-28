@@ -347,7 +347,7 @@ window.loadClassRanking = async function (slug) {
             const card = document.createElement('div');
             card.className = 'sci-fi-card';
 
-            const trophyHtml = index === 0 ? `<div class="trophy" style="position: absolute; top:-15px; left:-15px; font-size:35px; z-index:10; filter: drop-shadow(0 0 5px gold);">🏆</div>` : '';
+            const trophyHtml = index === 0 ? `<div class="trophy">🏆</div>` : '';
 
             const maxXP = 1900;
             const percentage = Math.min(100, Math.max(0, (aluno.xp_total / maxXP) * 100));
