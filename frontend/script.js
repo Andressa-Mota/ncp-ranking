@@ -330,9 +330,18 @@ window.loadClassRanking = async function (slug) {
 
         document.getElementById('turma-title').innerText = data.nome_turma.toUpperCase();
         const grid = document.getElementById('ranking-grid');
-        grid.innerHTML = '';
-
         currentClassSlug = slug;
+
+        // Exibe o poster apenas para turmas criadas por Andressa
+        const posterContainer = document.getElementById('andressa-poster-container');
+        if (posterContainer) {
+            const classAdmin = (data.admin || 'andressa').toLowerCase();
+            if (classAdmin === 'andressa') {
+                posterContainer.style.display = 'block';
+            } else {
+                posterContainer.style.display = 'none';
+            }
+        }
 
         data.alunos.forEach((aluno, index) => {
             const card = document.createElement('div');

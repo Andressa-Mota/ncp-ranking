@@ -797,6 +797,55 @@ body {
         font-size: 10px;
     }
 
+    /* Poster Rumo ao Dia da Pizza Mobile Fixes */
+    .andressa-poster-content {
+        height: 55px;
+        padding: 0 10px;
+    }
+    .poster-title {
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin: 0 5px;
+    }
+    .poster-side-group {
+        gap: 6px;
+    }
+    .pizza-svg {
+        width: 38px;
+        height: 38px;
+    }
+    .pepperoni-cluster {
+        width: 28px;
+        height: 28px;
+    }
+    .pep-1 { width: 11px; height: 11px; }
+    .pep-2 { width: 9px; height: 9px; top: 10px; left: 11px; }
+    .pep-3 { width: 10px; height: 10px; }
+    .pep-4 { width: 9px; height: 9px; }
+
+    @media (max-width: 480px) {
+        .andressa-poster-content {
+            height: 48px;
+            padding: 0 6px;
+        }
+        .poster-title {
+            font-size: 10.5px;
+            letter-spacing: 0.5px;
+        }
+        .pizza-svg {
+            width: 30px;
+            height: 30px;
+        }
+        .pepperoni-cluster {
+            display: none;
+        }
+    }
+    @media (max-width: 360px) {
+        .poster-title {
+            font-size: 9px;
+        }
+    }
+
     /* Info Sections Mobile Fixes (Index.html) */
     .info-sections {
         height: auto !important; /* Allow scrolling */
@@ -1084,6 +1133,95 @@ body {
     color: #005aff;
     font-weight: bold;
 }
+
+/* ========================================================
+   POSTER "RUMO AO DIA DA PIZZA" (TURMAS DA ANDRESSA)
+   ======================================================== */
+.andressa-poster-container {
+    width: 100%;
+    background-color: #d66161;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    border-top: 2px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.andressa-poster-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+.poster-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 22px;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+    margin: 0 15px;
+    white-space: nowrap;
+}
+
+.poster-side-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.pizza-svg {
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.slice-left {
+    transform: rotate(-15deg);
+}
+
+.slice-right {
+    transform: rotate(15deg) scaleX(-1);
+}
+
+.pepperoni-cluster {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.pep-dot {
+    position: absolute;
+    border-radius: 50%;
+    background-color: #b91c1c;
+    border: 1.5px solid #7f1d1d;
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.pep-dot::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 25%;
+    height: 25%;
+    background-color: #fca5a5;
+    border-radius: 50%;
+    opacity: 0.7;
+}
+
+.pep-1 { width: 16px; height: 16px; top: 0; left: 0; }
+.pep-2 { width: 14px; height: 14px; top: 14px; left: 16px; }
+.pep-3 { width: 15px; height: 15px; bottom: 0; left: 2px; }
+.pep-4 { width: 13px; height: 13px; top: 2px; right: 0; }
 
 /* Badge Overlay Picker */
 .badge-overlay-mask {
