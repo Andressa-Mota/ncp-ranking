@@ -387,6 +387,32 @@ window.loadClassRanking = async function (slug) {
             grid.appendChild(card);
         });
 
+        // Cálculo do XP Total e Média de XP da Turma
+        const totalAlunos = Array.isArray(data.alunos) ? data.alunos.length : 0;
+        const totalXP = Array.isArray(data.alunos) ? data.alunos.reduce((acc, a) => acc + Number(a.xp_total || 0), 0) : 0;
+        const mediaXP = totalAlunos > 0 ? (totalXP / totalAlunos) : 0;
+        
+        // Limite de XP por aluno é 1900, calculando o preenchimento proporcional da barra da turma
+        const maxClassXP = totalAlunos * 1900;
+        const classPercentage = maxClassXP > 0 ? Math.min(100, Math.max(0, (totalXP / maxClassXP) * 100)) : 0;
+
+        const totalXPElem = document.getElementById('turma-total-xp-val');
+        const fillElem = document.getElementById('turma-xp-fill');
+        const mediaXPElem = document.getElementById('turma-media-xp-val');
+
+        if (totalXPElem) {
+            totalXPElem.innerText = `${totalXP.toLocaleString('pt-BR')} XP`;
+        }
+        if (fillElem) {
+            fillElem.style.width = `${classPercentage}%`;
+        }
+        if (mediaXPElem) {
+            const mediaFormatted = Number.isInteger(mediaXP) 
+                ? mediaXP.toLocaleString('pt-BR') 
+                : mediaXP.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            mediaXPElem.innerText = `${mediaFormatted} XP`;
+        }
+
         const headerRight = document.getElementById('header-right-actions');
         if (userType === 'admin' && headerRight) {
             let adminMenuCnt = document.getElementById('admin-menu-container');
