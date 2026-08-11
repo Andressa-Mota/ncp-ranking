@@ -122,8 +122,11 @@ async def create_class(req: ClassSchema):
 @app.get("/api/turmas")
 async def get_classes(admin: Optional[str] = None):
     query = {}
-    if admin and admin.lower() != "admimncp":
-        query["admin"] = {"$regex": f"^{re.escape(admin)}$", "$options": "i"}
+    if admin:
+        if admin.lower() == "admimncp":
+            query["admin"] = {"$in": [re.compile("^andressa$", re.IGNORECASE), re.compile("^lucas$", re.IGNORECASE)]}
+        else:
+            query["admin"] = {"$regex": f"^{re.escape(admin)}$", "$options": "i"}
         
     cursor = get_db()["turmas"].find(query, {"_id": 0})
     turmas = []

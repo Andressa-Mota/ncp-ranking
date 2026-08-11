@@ -77,10 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     const lucasTurmas = [];
 
                     (data.turmas || []).forEach(c => {
-                        const creator = (c.admin || 'andressa').toLowerCase();
+                        const creator = (c.admin || '').toLowerCase();
                         if (creator === 'lucas') {
                             lucasTurmas.push(c);
-                        } else {
+                        } else if (creator === 'andressa') {
                             andressaTurmas.push(c);
                         }
                     });
