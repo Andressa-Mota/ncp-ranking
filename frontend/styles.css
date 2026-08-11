@@ -226,6 +226,61 @@ body {
     width: 100%;
 }
 
+/* Quadrantes de Turmas por Criador (admimncp) */
+.quadrants-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto 0 auto;
+}
+
+.quadrant {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 90, 255, 0.05);
+    border: 2px solid #005aff;
+    border-radius: 15px;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0, 90, 255, 0.15);
+    min-height: 200px;
+}
+
+.quadrant-title {
+    font-family: 'Audiowide', cursive;
+    color: #005aff;
+    font-size: 18px;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+    border-bottom: 2px solid #005aff;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.quadrant-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.empty-quadrant-msg {
+    font-family: 'Audiowide', cursive;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 20px;
+}
+
 .class-btn {
     background-color: #0a4fdf;
     color: white;
@@ -747,6 +802,21 @@ body {
         flex-direction: column;
         align-items: center;
         gap: 15px; /* Shrunk gap */
+    }
+    .quadrants-container {
+        flex-direction: column !important;
+        gap: 25px !important;
+        width: 100% !important;
+        margin-top: 15px !important;
+    }
+    .quadrant {
+        width: 100% !important;
+        padding: 18px 12px !important;
+    }
+    .quadrant-title {
+        font-size: 15px !important;
+        margin-bottom: 15px !important;
+        padding-bottom: 8px !important;
     }
     .class-btn {
         width: 100%;

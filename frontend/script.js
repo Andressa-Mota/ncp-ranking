@@ -61,47 +61,121 @@ document.addEventListener("DOMContentLoaded", () => {
     if (menuContainer && window.location.pathname.includes("menu.html")) {
         menuContainer.innerHTML = '';
 
+        const userType = localStorage.getItem('userType') || '';
         const adminUsername = localStorage.getItem('username') || '';
+
+        const menuActionsContainer = document.querySelector('.menu-actions-container');
+        if (userType === 'admimncp' && menuActionsContainer) {
+            menuActionsContainer.style.display = 'none';
+        }
+
         fetch(`${API_URL}/turmas?admin=${adminUsername}`)
             .then(res => res.json())
             .then(data => {
-                data.turmas.forEach(c => {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.position = 'relative';
-                    wrapper.style.display = 'inline-block';
+                if (userType === 'admimncp') {
+                    const andressaTurmas = [];
+                    const lucasTurmas = [];
 
-                    const btn = document.createElement('button');
-                    btn.className = 'class-btn';
-                    btn.textContent = c.nome_turma;
-                    btn.onclick = () => goToPage('turma.html?id=' + c.slug);
-
-                    const deleteBtn = document.createElement('div');
-                    deleteBtn.innerHTML = '✖';
-                    deleteBtn.style.cssText = "position: absolute; top: -10px; right: -10px; background: red; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold; font-family: sans-serif; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 10;";
-
-                    deleteBtn.onclick = async (e) => {
-                        e.stopPropagation(); // Previne o clique de ir para a turma
-
-                        // Alerta para perguntar se realmente quer excluir
-                        if (confirm(`Tem certeza que deseja excluir a turma "${c.nome_turma}" e TODOS os dados e alunos dela do banco de dados? Essa ação é DEFINITIVA!`)) {
-                            try {
-                                const response = await fetch(`${API_URL}/turmas/${c.slug}?admin=${adminUsername}`, { method: 'DELETE' });
-                                if (response.ok) {
-                                    alert("Turma excluída com sucesso do banco de dados!");
-                                    window.location.reload(); // Recarrega a página para remover o botão
-                                } else {
-                                    alert("Falha ao excluir a turma. Verifique a conexão.");
-                                }
-                            } catch (err) {
-                                alert("Erro de conexão ao tentar excluir a turma.");
-                            }
+                    (data.turmas || []).forEach(c => {
+                        const creator = (c.admin || 'andressa').toLowerCase();
+                        if (creator === 'lucas') {
+                            lucasTurmas.push(c);
+                        } else {
+                            andressaTurmas.push(c);
                         }
-                    };
+                    });
 
-                    wrapper.appendChild(btn);
-                    wrapper.appendChild(deleteBtn);
-                    menuContainer.appendChild(wrapper);
-                });
+                    const quadrantsContainer = document.createElement('div');
+                    quadrantsContainer.className = 'quadrants-container';
+
+                    // Quadrante Andressa (Lado Esquerdo no PC / Em Cima no Mobile)
+                    const andressaQuad = document.createElement('div');
+                    andressaQuad.className = 'quadrant quadrant-left';
+                    const andressaTitle = document.createElement('h3');
+                    andressaTitle.className = 'quadrant-title';
+                    andressaTitle.textContent = 'TURMAS DE ANDRESSA';
+                    const andressaButtons = document.createElement('div');
+                    andressaButtons.className = 'quadrant-buttons';
+
+                    if (andressaTurmas.length === 0) {
+                        andressaButtons.innerHTML = '<p class="empty-quadrant-msg">NENHUMA TURMA CADASTRADA</p>';
+                    } else {
+                        andressaTurmas.forEach(c => {
+                            const btn = document.createElement('button');
+                            btn.className = 'class-btn';
+                            btn.textContent = c.nome_turma;
+                            btn.onclick = () => goToPage('turma.html?id=' + c.slug);
+                            andressaButtons.appendChild(btn);
+                        });
+                    }
+                    andressaQuad.appendChild(andressaTitle);
+                    andressaQuad.appendChild(andressaButtons);
+
+                    // Quadrante Lucas (Lado Direito no PC / Em Baixo no Mobile)
+                    const lucasQuad = document.createElement('div');
+                    lucasQuad.className = 'quadrant quadrant-right';
+                    const lucasTitle = document.createElement('h3');
+                    lucasTitle.className = 'quadrant-title';
+                    lucasTitle.textContent = 'TURMAS DE LUCAS';
+                    const lucasButtons = document.createElement('div');
+                    lucasButtons.className = 'quadrant-buttons';
+
+                    if (lucasTurmas.length === 0) {
+                        lucasButtons.innerHTML = '<p class="empty-quadrant-msg">NENHUMA TURMA CADASTRADA</p>';
+                    } else {
+                        lucasTurmas.forEach(c => {
+                            const btn = document.createElement('button');
+                            btn.className = 'class-btn';
+                            btn.textContent = c.nome_turma;
+                            btn.onclick = () => goToPage('turma.html?id=' + c.slug);
+                            lucasButtons.appendChild(btn);
+                        });
+                    }
+                    lucasQuad.appendChild(lucasTitle);
+                    lucasQuad.appendChild(lucasButtons);
+
+                    quadrantsContainer.appendChild(andressaQuad);
+                    quadrantsContainer.appendChild(lucasQuad);
+
+                    menuContainer.appendChild(quadrantsContainer);
+                } else {
+                    data.turmas.forEach(c => {
+                        const wrapper = document.createElement('div');
+                        wrapper.style.position = 'relative';
+                        wrapper.style.display = 'inline-block';
+
+                        const btn = document.createElement('button');
+                        btn.className = 'class-btn';
+                        btn.textContent = c.nome_turma;
+                        btn.onclick = () => goToPage('turma.html?id=' + c.slug);
+
+                        const deleteBtn = document.createElement('div');
+                        deleteBtn.innerHTML = '✖';
+                        deleteBtn.style.cssText = "position: absolute; top: -10px; right: -10px; background: red; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold; font-family: sans-serif; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 10;";
+
+                        deleteBtn.onclick = async (e) => {
+                            e.stopPropagation();
+
+                            if (confirm(`Tem certeza que deseja excluir a turma "${c.nome_turma}" e TODOS os dados e alunos dela do banco de dados? Essa ação é DEFINITIVA!`)) {
+                                try {
+                                    const response = await fetch(`${API_URL}/turmas/${c.slug}?admin=${adminUsername}`, { method: 'DELETE' });
+                                    if (response.ok) {
+                                        alert("Turma excluída com sucesso do banco de dados!");
+                                        window.location.reload();
+                                    } else {
+                                        alert("Falha ao excluir a turma. Verifique a conexão.");
+                                    }
+                                } catch (err) {
+                                    alert("Erro de conexão ao tentar excluir a turma.");
+                                }
+                            }
+                        };
+
+                        wrapper.appendChild(btn);
+                        wrapper.appendChild(deleteBtn);
+                        menuContainer.appendChild(wrapper);
+                    });
+                }
             })
             .catch(err => console.error("Sem conexão com o backend: ", err));
     }
@@ -258,6 +332,8 @@ let currentHtmlId = -1;
 let currentClassSlug = "";
 
 window.openBadgeSelector = function (nome, slotIndex, htmlId) {
+    const userType = localStorage.getItem('userType');
+    if (userType !== 'admin') return;
     currentBadgeStudentName = nome;
     currentBadgeIndex = slotIndex;
     currentHtmlId = htmlId;
@@ -423,7 +499,7 @@ window.loadClassRanking = async function (slug) {
         }
 
         const headerRight = document.getElementById('header-right-actions');
-        if (userType === 'admin' && headerRight) {
+        if ((userType === 'admin' || userType === 'admimncp') && headerRight) {
             let adminMenuCnt = document.getElementById('admin-menu-container');
             if (!adminMenuCnt) {
                 adminMenuCnt = document.createElement('div');
@@ -447,13 +523,15 @@ window.loadClassRanking = async function (slug) {
                 relatorioBtn.textContent = 'RELATÓRIO';
                 relatorioBtn.onclick = () => goToPage('relatorio.html?id=' + slug);
 
-                let editBtn = document.createElement('button');
-                editBtn.className = 'edit-btn-white-blue btn-editar';
-                editBtn.textContent = 'EDITAR TURMA';
-                editBtn.onclick = () => goToPage('editar-turma.html?id=' + slug);
-
                 dropdown.appendChild(relatorioBtn);
-                dropdown.appendChild(editBtn);
+
+                if (userType === 'admin') {
+                    let editBtn = document.createElement('button');
+                    editBtn.className = 'edit-btn-white-blue btn-editar';
+                    editBtn.textContent = 'EDITAR TURMA';
+                    editBtn.onclick = () => goToPage('editar-turma.html?id=' + slug);
+                    dropdown.appendChild(editBtn);
+                }
 
                 adminMenuCnt.appendChild(hamburger);
                 adminMenuCnt.appendChild(dropdown);
@@ -783,6 +861,11 @@ window.addExpandedStudentFields = function () {
 window.loadClassForEdit = async function (slug) {
     const adminUsername = localStorage.getItem('username') || '';
     const userType = localStorage.getItem('userType') || '';
+    if (userType !== 'admin') {
+        alert("Acesso negado.");
+        window.location.href = "menu.html";
+        return;
+    }
     try {
         const response = await fetch(`${API_URL}/turmas/${slug}?admin=${adminUsername}&userType=${userType}`);
         if (!response.ok) throw new Error("Turma não encontrada para edição");

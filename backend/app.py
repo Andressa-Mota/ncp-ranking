@@ -88,6 +88,9 @@ async def login(req: LoginRequest):
         
     if usr == "lucas" and req.password == "lucas.001":
         return {"userType": "admin", "username": "Lucas"}
+        
+    if usr == "admimncp" and req.password == "admim123":
+        return {"userType": "admimncp", "username": "admimncp"}
     
     aluno = await get_db()["alunos"].find_one({"usuario": req.username, "senha": req.password})
     if aluno:
@@ -119,7 +122,7 @@ async def create_class(req: ClassSchema):
 @app.get("/api/turmas")
 async def get_classes(admin: Optional[str] = None):
     query = {}
-    if admin:
+    if admin and admin.lower() != "admimncp":
         query["admin"] = {"$regex": f"^{re.escape(admin)}$", "$options": "i"}
         
     cursor = get_db()["turmas"].find(query, {"_id": 0})
