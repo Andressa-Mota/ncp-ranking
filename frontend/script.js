@@ -332,11 +332,11 @@ window.loadClassRanking = async function (slug) {
         const grid = document.getElementById('ranking-grid');
         currentClassSlug = slug;
 
-        // Exibe o poster apenas para turmas criadas por Andressa
+        // Exibe o poster apenas para turmas criadas por Andressa ou Lucas
         const posterContainer = document.getElementById('andressa-poster-container');
         if (posterContainer) {
             const classAdmin = (data.admin || 'andressa').toLowerCase();
-            if (classAdmin === 'andressa') {
+            if (classAdmin === 'andressa' || classAdmin === 'lucas') {
                 posterContainer.style.display = 'block';
             } else {
                 posterContainer.style.display = 'none';
